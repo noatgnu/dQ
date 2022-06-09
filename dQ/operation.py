@@ -1,4 +1,11 @@
 import io
+import matplotlib
+
+matplotlib.use('agg')
+
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+plt.ioff()
 
 import pandas as pd
 import pandera as pa
@@ -8,6 +15,8 @@ import numpy as np
 from glob import glob
 
 from scipy.stats import variation, sem
+import scipy.cluster.hierarchy as sch
+
 from unimod_mapper import UnimodMapper
 
 from sequal.sequence import Sequence
@@ -16,7 +25,38 @@ from uniprot.parser import acc_regex, UniprotParser
 from pandas import Series
 from plotnine import ggplot, aes, geom_col, scale_fill_brewer, facet_wrap, theme_minimal, geom_text, geom_boxplot, \
     theme, element_text, save_as_pdf_pages, ggtitle, geom_density, scale_color_brewer, geom_line, geom_point, \
-    geom_errorbar
+    geom_errorbar, geom_tile
+
+import seaborn as sns
+
+def cluster_corr(corr_array, inplace=False):
+    """
+    Rearranges the correlation matrix, corr_array, so that groups of highly
+    correlated variables are next to eachother
+
+    Parameters
+    ----------
+    corr_array : pandas.DataFrame or numpy.ndarray
+        a NxN correlation matrix
+
+    Returns
+    -------
+    pandas.DataFrame or numpy.ndarray
+        a NxN correlation matrix with the columns and rows rearranged
+    """
+    pairwise_distances = sch.distance.pdist(corr_array)
+    linkage = sch.linkage(pairwise_distances, method='complete')
+    cluster_distance_threshold = pairwise_distances.max() / 2
+    idx_to_cluster_array = sch.fcluster(linkage, cluster_distance_threshold,
+                                        criterion='distance')
+    idx = np.argsort(idx_to_cluster_array)
+
+    if not inplace:
+        corr_array = corr_array.copy()
+
+    if isinstance(corr_array, pd.DataFrame):
+        return corr_array.iloc[idx, :].T.iloc[idx, :]
+    return corr_array[idx, :][:, idx]
 
 
 def initial_check_pr(df: pd.DataFrame, samples: list[str]):
@@ -99,17 +139,16 @@ class Diann:
         self.draw_profile(self.joined_pg, os.path.join(self.temp_folder_path, "profile.pg.pdf"))
         self.draw_total_intensity(self.joined_pr, os.path.join(self.temp_folder_path, "total.intensity.pr.pdf"))
         self.draw_detected_genes(self.joined_pr, os.path.join(self.temp_folder_path, "gene.detected.pr.pdf"))
-        self.draw_cv(self.joined_pr, os.path.join(self.temp_folder_path, "cv.pr.pdf"))
-        self.draw_cv(self.joined_pg, os.path.join(self.temp_folder_path, "cv.pg.pdf"))
-        self.protein_coverage()
-        self.modification_map()
+        self.draw_cv(self.joined_pr, os.path.join(self.temp_folder_path, "cv.pr.pdf"),
+                     ["Condition", "Protein.Group", "Modified.Sequence"])
+        self.draw_cv(self.joined_pg, os.path.join(self.temp_folder_path, "cv.pg.pdf"), ["Condition", "Protein.Group"])
+        # self.protein_coverage()
+        # self.modification_map()
 
     def join_df(self, df_dict):
         combined_pr = []
         order = []
         condition_order = []
-        print(self.annotation)
-
         for k in df_dict:
             if k in self.annotation:
                 folder = k
@@ -189,15 +228,18 @@ class Diann:
         for l in self.raw_file_location:
             self.pr[l] = self.process_pr(l, self.raw_file_location[l])
             self.pg[l] = self.process_pg(l, self.raw_file_location[l])
+            _, folder = os.path.split(l)
+            self.draw_correlation_matrix(self.pr[l], os.path.join(self.temp_folder_path, folder))
             peptide = self.pr[l].groupby(["Protein.Group"]).size()
             peptide = peptide.reset_index()
             peptide = peptide.rename(columns={peptide.columns[-1]: "Peptide.Count"})
-            unique_peptide = self.pr[l][self.pr[l]["Proteotypic"]==1].groupby(["Protein.Group"]).size()
+            unique_peptide = self.pr[l][self.pr[l]["Proteotypic"] == 1].groupby(["Protein.Group"]).size()
             unique_peptide = unique_peptide.reset_index()
             unique_peptide = unique_peptide.rename(columns={unique_peptide.columns[-1]: "Unique.Peptide.Count"})
             unique_peptide = unique_peptide
             peptide = peptide.merge(unique_peptide, on="Protein.Group")
-            self.pg[l].merge(peptide, on="Protein.Group").to_csv(os.path.join(l, "Reports.pg_matrix.with.peptide.count.tsv"), sep="\t", index=False)
+            self.pg[l].merge(peptide, on="Protein.Group").to_csv(
+                os.path.join(l, "Reports.pg_matrix.with.peptide.count.tsv"), sep="\t", index=False)
 
     def draw_null(self):
         for l in self.raw_file_location:
@@ -216,7 +258,6 @@ class Diann:
                 path=os.path.join(folder, "temp.pg_matrix.countnull.pdf"),
                 file_list=self.raw_file_location[l])
 
-
     def draw_report_stats(self, folder, path):
         report_path = os.path.join(folder, "Reports.stats.tsv")
         df = pd.read_csv(report_path, sep="\t")
@@ -225,14 +266,15 @@ class Diann:
             df.at[i, "Condition"] = self.annotation[folder][sample]
         mean_data = []
         for label, group_data in df.groupby("Condition"):
-            mean_data.append([label, np.mean(group_data['Proteins.Identified']), sem(group_data["Proteins.Identified"])])
+            mean_data.append(
+                [label, np.mean(group_data['Proteins.Identified']), sem(group_data["Proteins.Identified"])])
         df_mean = pd.DataFrame(mean_data, columns=["Condition", "Count", "Error"])
         result = ggplot() + \
-        geom_col(df_mean, aes(x="Condition", y="Count", fill="Condition")) +\
-        geom_point(df, aes(x="Condition", y="Proteins.Identified"), fill="black", position="jitter") +\
-        geom_errorbar(
-            df_mean, aes(x="Condition", ymin="Count-Error", ymax="Count+Error")) +\
-        scale_fill_brewer(type="qual", palette="Pastel1") + theme_minimal()
+                 geom_col(df_mean, aes(x="Condition", y="Count", fill="Condition")) + \
+                 geom_point(df, aes(x="Condition", y="Proteins.Identified"), fill="black", position="jitter") + \
+                 geom_errorbar(
+                     df_mean, aes(x="Condition", ymin="Count-Error", ymax="Count+Error")) + \
+                 scale_fill_brewer(type="qual", palette="Pastel1") + theme_minimal()
         result.save(os.path.join(path, "proteins.identified.pdf"))
 
     def _draw_null(self, folder, data, path, file_list):
@@ -381,32 +423,73 @@ class Diann:
         self.modification.rename(columns={0: "Instance counts"}, inplace=True)
         self.modification.to_csv(os.path.join(self.temp_folder_path, "modification.map.txt"), sep="\t", index=False)
 
-    def calculate_CV(self, joined_df: pd.DataFrame):
+    def calculate_CV(self, joined_df: pd.DataFrame, group):
         arr = []
-        for i, g in joined_df.groupby(["Condition", "Protein.Group"]):
+        for i, g in joined_df.groupby(group):
             a = variation(g["Intensity"], nan_policy="omit")
             arr.append([i[0], a])
         df = pd.DataFrame(arr, columns=["Condition", "CV"])
+        df = df[pd.notnull(df["CV"])]
         return df
 
     def draw_cv_density(self, df: pd.DataFrame, filename):
         plots = []
-        custom_legend = []
-        for label, group_data in df.groupby(["Condition"]):
-            title = label + " ({})".format(np.round(group_data["CV"].median(), 2))
-            custom_legend.append(title)
-            plots.append(
-                ggplot(group_data, aes(x="CV"))
-                + geom_line(size=2, stat="density")
-                + theme_minimal() + ggtitle(title))
+        custom_legend = {}
+        with PdfPages(filename) as pdf_pages:
 
-        plots = [ggplot(df, aes(x="CV", colour="Condition")) + geom_line(size=2, stat="density") + scale_color_brewer(
-            type="qual", palette="Pastel1", labels=custom_legend) + theme_minimal()] + plots
-        save_as_pdf_pages(plots, filename)
+            for label, group_data in df.groupby(["Condition"]):
+                fig, ax = plt.subplots()
+                title = label + " ({})".format(np.round(group_data["CV"].median(), 2))
+                custom_legend[label] = title
+                sns.kdeplot(data=group_data, x="CV", linewidth=5, ax=ax).set(title=title)
+                plots.append(fig)
+            fig, ax = plt.subplots()
+            sns.kdeplot(data=df.assign(Label=df["Condition"].map(custom_legend)), hue="Label", x="CV", linewidth=5, ax=ax)
+            plots = [fig] + plots
+            for p in plots:
+                pdf_pages.savefig(p)
+        # for label, group_data in df.groupby(["Condition"]):
+        #     title = label + " ({})".format(np.round(group_data["CV"].median(), 2))
+        #     custom_legend.append(title)
+        #     plots.append(
+        #         ggplot(group_data, aes(x="CV"))
+        #         + geom_line(size=2, stat="density")
+        #         # + geom_density(alpha=0.1)
+        #         + theme_minimal() + ggtitle(title))
+        #
+        # plots = [ggplot(df, aes(x="CV", colour="Condition"))
+        #          + geom_line(size=2, stat="density")
+        #          # + geom_density(alpha=0.1)
+        #          + scale_color_brewer(
+        #     type="qual", palette="Pastel1", labels=custom_legend) + theme_minimal()] + plots
+        # save_as_pdf_pages(plots, filename)
 
-    def draw_cv(self, joined_df: pd.DataFrame, filename):
-        cv = self.calculate_CV(joined_df)
+    def draw_cv(self, joined_df: pd.DataFrame, filename, group):
+        cv = self.calculate_CV(joined_df, group)
+        cv.to_csv(filename + ".txt", sep="\t", index=False)
         self.draw_cv_density(cv, filename)
+
+    def draw_correlation_matrix(self, df: pd.DataFrame, path):
+        l, folder = os.path.split(path)
+        corr_mat = df[df.columns[11:]].corr()
+        clustered = cluster_corr(corr_mat)
+        clustered.to_csv(os.path.join(path, "correlation_matrix.tsv"), sep="\t")
+        clustered = clustered.reset_index()
+        clustered = clustered.rename(columns={clustered.columns[0]: "X"})
+        orderX = [i for i in clustered["X"]]
+        orderY = [i for i in clustered.columns if i != "X"]
+        print(clustered.columns)
+        melted = pd.melt(clustered,
+                         id_vars=["X"],
+                         value_vars=[i for i in clustered.columns if i != "X"],
+                         value_name="Intensity",
+                         var_name="Y"
+                         )
+        melted["X"] = pd.Categorical(melted["X"], categories=orderX)
+        melted["Y"] = pd.Categorical(melted["Y"], categories=orderY)
+        plots = ggplot(melted, aes(x="X", y="Y", fill="Intensity")) + geom_tile() + theme_minimal() \
+                + theme(axis_text_x=element_text(rotation=90))
+        plots.save(os.path.join(path, "correlation_matrix.pdf"))
 
     def get_fasta_lib(self):
         accessions = set()
@@ -434,4 +517,4 @@ class Diann:
                 else:
                     current_seq += line
             seqs[current_id[:]] = current_seq[:]
-        return  seqs
+        return seqs
