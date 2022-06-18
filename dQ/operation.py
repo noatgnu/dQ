@@ -1,10 +1,20 @@
 import io
 import matplotlib
+import sys
+import sklearn.neighbors
+from goatools.anno.gaf_reader import GafReader
+from goatools.obo_parser import GODag
 
+
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler, normalize, RobustScaler
+
+sys.modules['sklearn.neighbors.base'] = sklearn.neighbors._base
 matplotlib.use('agg')
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+
 plt.ioff()
 
 import pandas as pd
@@ -28,6 +38,7 @@ from plotnine import ggplot, aes, geom_col, scale_fill_brewer, facet_wrap, theme
     geom_errorbar, geom_tile
 
 import seaborn as sns
+from missingpy import MissForest
 
 def cluster_corr(corr_array, inplace=False):
     """
@@ -57,6 +68,15 @@ def cluster_corr(corr_array, inplace=False):
     if isinstance(corr_array, pd.DataFrame):
         return corr_array.iloc[idx, :].T.iloc[idx, :]
     return corr_array[idx, :][:, idx]
+
+
+def skip_rows(x):
+    row = x.strip()
+    if row == "":
+        return False
+    if row.starswith("---"):
+        return False
+
 
 
 def initial_check_pr(df: pd.DataFrame, samples: list[str]):
@@ -116,10 +136,11 @@ class File:
 
 
 class Diann:
-    def __init__(self, folder_path, temp_folder_path=".", fasta_lib_path=""):
+    def __init__(self, folder_path, temp_folder_path=".", fasta_lib_path="", goa_file="", go_obo=""):
         self.folder_path = folder_path
         self.fasta_lib_path = fasta_lib_path
-
+        self.goa_file = goa_file
+        self.go_obo = go_obo
         self.annotation = {}
         self.raw_file_location = self.parse_log()
         self.pr = {}
@@ -136,14 +157,15 @@ class Diann:
         else:
             self.fasta_lib = self.load_fasta_library()
         self.draw_null()
+        self.pca(self.joined_pg, self.temp_folder_path)
         self.draw_profile(self.joined_pg, os.path.join(self.temp_folder_path, "profile.pg.pdf"))
         self.draw_total_intensity(self.joined_pr, os.path.join(self.temp_folder_path, "total.intensity.pr.pdf"))
         self.draw_detected_genes(self.joined_pr, os.path.join(self.temp_folder_path, "gene.detected.pr.pdf"))
         self.draw_cv(self.joined_pr, os.path.join(self.temp_folder_path, "cv.pr.pdf"),
                      ["Condition", "Protein.Group", "Modified.Sequence"])
         self.draw_cv(self.joined_pg, os.path.join(self.temp_folder_path, "cv.pg.pdf"), ["Condition", "Protein.Group"])
-        # self.protein_coverage()
-        # self.modification_map()
+        self.protein_coverage()
+        self.modification_map()
 
     def join_df(self, df_dict):
         combined_pr = []
@@ -157,14 +179,14 @@ class Diann:
                              value_vars=self.raw_file_location[k],
                              value_name="Intensity",
                              var_name="Sample")
+                label = []
                 for i, r in df.iterrows():
                     if r["Sample"] in self.annotation[folder]:
                         df.at[i, "Condition"] = self.annotation[folder][r["Sample"]]
+                        label.append(self.annotation[folder][r["Sample"]])
                         if self.annotation[folder][r["Sample"]] not in condition_order:
                             condition_order.append(self.annotation[folder][r["Sample"]])
-                print(df["Condition"])
                 combined_pr.append(df)
-
             else:
                 folder, condition = os.path.split(k)
                 condition_order.append(condition)
@@ -175,6 +197,7 @@ class Diann:
                              value_vars=self.raw_file_location[k],
                              value_name="Intensity",
                              var_name="Sample")
+                df["Location"] = k
                 combined_pr.append(df)
             order = order + self.raw_file_location[k]
         if len(combined_pr) < 2:
@@ -222,6 +245,33 @@ class Diann:
         pg_file = os.path.join(folder_path, "Reports.pg_matrix.tsv")
         df = pd.read_csv(pg_file, sep="\t")
         initial_check_pg(df, file_list)
+        if self.goa_file != "" and self.go_obo != "":
+            a = set()
+            dic = {}
+            for prs in df["Protein.Group"]:
+                dic[prs] = prs.split(";")
+                for pr in prs.split(";"):
+                    a.add(pr)
+
+            g = GafReader(self.goa_file)
+            gobo = GODag(self.go_obo)
+
+            annotation = g.get_ns2assc()
+            gos = {"BP": [], "CC": [], "MF": []}
+
+            for prs in df["Protein.Group"]:
+                go = {"BP": set(), "CC": set(), "MF": set()}
+                for p in dic[prs]:
+                    for ns in annotation:
+                        if p in annotation[ns]:
+                            for i in annotation[ns][p]:
+                                if i in gobo:
+                                    go[ns].add(gobo[i].name)
+                for ns in go:
+                    gos[ns].append(";".join(go[ns]))
+
+            for ns in gos:
+                df["GO.{}".format(ns)] = Series(gos[ns], index=df.index)
         return df
 
     def process_data(self):
@@ -229,6 +279,7 @@ class Diann:
             self.pr[l] = self.process_pr(l, self.raw_file_location[l])
             self.pg[l] = self.process_pg(l, self.raw_file_location[l])
             _, folder = os.path.split(l)
+            os.makedirs(os.path.join(self.temp_folder_path, folder), exist_ok=True)
             self.draw_correlation_matrix(self.pr[l], os.path.join(self.temp_folder_path, folder))
             peptide = self.pr[l].groupby(["Protein.Group"]).size()
             peptide = peptide.reset_index()
@@ -239,7 +290,7 @@ class Diann:
             unique_peptide = unique_peptide
             peptide = peptide.merge(unique_peptide, on="Protein.Group")
             self.pg[l].merge(peptide, on="Protein.Group").to_csv(
-                os.path.join(l, "Reports.pg_matrix.with.peptide.count.tsv"), sep="\t", index=False)
+                os.path.join(self.temp_folder_path, folder, "Reports.pg_matrix.with.peptide.count.tsv"), sep="\t", index=False)
 
     def draw_null(self):
         for l in self.raw_file_location:
@@ -304,23 +355,24 @@ class Diann:
         # result.save(path, "pdf", dpi=600, width=7, height=10)
 
     def draw_profile(self, data, path):
-        data["log2Intensity"] = np.log2(data["Intensity"])
-        result = ggplot(data, aes(x='Sample', y='log2Intensity', fill='Sample')) \
+        d = data.copy()
+        d["log2Intensity"] = np.log2(d["Intensity"])
+        result = ggplot(d, aes(x='Sample', y='log2Intensity', fill='Condition')) \
                  + geom_boxplot() + theme_minimal() + theme(axis_text_x=element_text(rotation=90))
         result.save(path, "pdf", width=10, height=15)
 
     def draw_total_intensity(self, data, path):
-        total_intensity = data.groupby(["Sample"])["Intensity"].sum()
+        total_intensity = data.groupby(["Sample", "Condition"])["Intensity"].sum()
         total_intensity = total_intensity.reset_index()
-        result = ggplot(total_intensity, aes(x="Sample", y="Intensity", fill="Sample")) \
+        result = ggplot(total_intensity, aes(x="Sample", y="Intensity", fill="Condition")) \
                  + geom_col(colour="black") + theme_minimal() + theme(axis_text_x=element_text(rotation=90))
         result.save(path, "pdf", width=10, height=15)
 
     def draw_detected_genes(self, data, path):
         genes = data[data["Intensity"].notnull()]
-        genes = genes.groupby(["Sample"])["Genes"].nunique()
+        genes = genes.groupby(["Sample", "Condition"])["Genes"].nunique()
         genes = genes.reset_index()
-        result = ggplot(genes, aes(x="Sample", y="Genes", fill="Sample")) \
+        result = ggplot(genes, aes(x="Sample", y="Genes", fill="Condition")) \
                  + geom_col(colour="black") + theme_minimal() + theme(axis_text_x=element_text(rotation=90))
         result.save(path, "pdf", width=10, height=15)
 
@@ -367,7 +419,14 @@ class Diann:
                     if r["Sample"] not in cover_dict[protein]:
                         cover_dict[protein][r["Sample"]] = {}
                     if seq:
-                        ind = seq.index(r["Stripped.Sequence"])
+                        try:
+                            ind = seq.index(r["Stripped.Sequence"])
+                        except ValueError:
+                            if protein+"-1" in self.fasta_lib:
+                                seq = self.fasta_lib[protein+"-1"]
+                                ind = seq.index(r["Stripped.Sequence"])
+                            else:
+                                ind = -1
                         if ind > -1:
                             for n in range(len(r["Stripped.Sequence"])):
                                 pos = ind + n
@@ -400,7 +459,14 @@ class Diann:
                         mod_dict[protein][r["Sample"]] = {}
 
                     if seq:
-                        ind = seq.index(r["Stripped.Sequence"])
+                        try:
+                            ind = seq.index(r["Stripped.Sequence"])
+                        except ValueError:
+                            if protein+"-1" in self.fasta_lib:
+                                seq = self.fasta_lib[protein+"-1"]
+                                ind = seq.index(r["Stripped.Sequence"])
+                            else:
+                                ind = -1
                         modded_pep = Sequence(r["Modified.Sequence"])
                         for n, a in enumerate(modded_pep):
                             if len(a.mods) > 0:
@@ -444,7 +510,8 @@ class Diann:
                 sns.kdeplot(data=group_data, x="CV", linewidth=5, ax=ax).set(title=title)
                 plots.append(fig)
             fig, ax = plt.subplots()
-            sns.kdeplot(data=df.assign(Label=df["Condition"].map(custom_legend)), hue="Label", x="CV", linewidth=5, ax=ax)
+            sns.kdeplot(data=df.assign(Label=df["Condition"].map(custom_legend)), hue="Label", x="CV", linewidth=5,
+                        ax=ax)
             plots = [fig] + plots
             for p in plots:
                 pdf_pages.savefig(p)
@@ -478,7 +545,6 @@ class Diann:
         clustered = clustered.rename(columns={clustered.columns[0]: "X"})
         orderX = [i for i in clustered["X"]]
         orderY = [i for i in clustered.columns if i != "X"]
-        print(clustered.columns)
         melted = pd.melt(clustered,
                          id_vars=["X"],
                          value_vars=[i for i in clustered.columns if i != "X"],
@@ -493,7 +559,7 @@ class Diann:
 
     def get_fasta_lib(self):
         accessions = set()
-        for i in self.joined_pg["Protein.Groups"]:
+        for i in self.joined_pg["Protein.Group"]:
             accs = i.split(";")
             for a in accs:
                 accessions.add(a)
@@ -518,3 +584,29 @@ class Diann:
                     current_seq += line
             seqs[current_id[:]] = current_seq[:]
         return seqs
+
+    def pca(self, df: pd.DataFrame, path):
+        d = df.copy()
+        d["Sample"] = d["Sample"].astype(str)
+        a = d["Sample"].unique()
+        d = d[[c for c in d.columns if c != "Condition"]]
+        d = d.pivot(columns="Sample", values="Intensity", index=[c for c in d.columns if c not in ["Sample", "Intensity"]])
+        imputer = MissForest()
+        imputed = imputer.fit_transform(d[a])
+        scaler = RobustScaler()
+        imputed = scaler.fit_transform(imputed)
+        pca = PCA(n_components=2)
+        pc = pca.fit_transform(imputed.T)
+        pc1 = "PC1({})".format(round(pca.explained_variance_ratio_[0], 2))
+        pc2 = "PC2({})".format(round(pca.explained_variance_ratio_[1], 2))
+        new_df = pd.DataFrame(data=pc, columns=[pc1, pc2])
+        new_df["Sample"] = pd.Series(a, index=new_df.index)
+        for i, r in new_df.iterrows():
+            for l in self.annotation:
+                if r["Sample"] in self.annotation[l]:
+                    new_df.at[i, "Condition"] = self.annotation[l][r["Sample"]]
+                    break
+        new_df.to_csv(os.path.join(path, "pca.csv"), index=False)
+        plot = ggplot(new_df, aes(x=pc1, y=pc2, fill="Condition", colour="Condition")) + geom_point(alpha=0.50, size=2) + theme_minimal()
+        plot.save(os.path.join(path, "pca.pdf"))
+

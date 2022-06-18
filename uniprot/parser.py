@@ -52,6 +52,9 @@ class UniprotParser:
         self.acc_list = acc_list
         if not unique:
             self.acc_list = list(set(i for i in self.acc_list))
+            for a in self.acc_list:
+                if "-" not in a:
+                    self.acc_list.append(a+"-1")
         self.total_input = len(acc_list)
 
     @staticmethod

@@ -1,0 +1,673 @@
+DIA-NN 1.8 (Data-Independent Acquisition by Neural Networks)
+Compiled on Jun 28 2021 14:55:31
+Current date and time: Mon Jun  6 18:07:49 2022
+CPU: GenuineIntel Intel(R) Xeon(R) Silver 4214R CPU @ 2.40GHz
+SIMD instructions: AVX AVX2 AVX512CD AVX512F FMA SSE4.1 SSE4.2 
+Logical CPU cores: 48
+diann.exe --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_01.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_02.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_03.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_01.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_02.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_03.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_01.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_02.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_03.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_01.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_02.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_03.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_01.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_02.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_03.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_01.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_02.raw  --f C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_03.raw  --lib  --threads 48 --verbose 1 --out C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports.tsv --qvalue 0.01 --matrices --temp C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA" --out-lib C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\report-lib.tsv --gen-spec-lib --predictor --fasta C:\Raja\Database\Mouse_UniprotSP_Cano+Iso_052021.fasta --fasta-search --min-fr-mz 200 --max-fr-mz 1800 --cut K*,R* --missed-cleavages 2 --min-pep-len 7 --max-pep-len 30 --min-pr-mz 300 --max-pr-mz 1800 --min-pr-charge 1 --max-pr-charge 4 --unimod4 --var-mods 1 --var-mod UniMod:35,15.994915,M --mass-acc 20 --mass-acc-ms1 20 --reanalyse --smart-profiling --no-maxlfq  --no-norm 
+
+Thread number set to 48
+Output will be filtered at 0.01 FDR
+Precursor/protein x samples expression level matrices will be saved along with the main report
+A spectral library will be generated
+Deep learning will be used to generate a new in silico spectral library from peptides provided
+Library-free search enabled
+Min fragment m/z set to 200
+Max fragment m/z set to 1800
+In silico digest will involve cuts at K*,R*
+Maximum number of missed cleavages set to 2
+Min peptide length set to 7
+Max peptide length set to 30
+Min precursor m/z set to 300
+Max precursor m/z set to 1800
+Min precursor charge set to 1
+Max precursor charge set to 4
+Cysteine carbamidomethylation enabled as a fixed modification
+Maximum number of variable modifications set to 1
+Modification UniMod:35 with mass delta 15.9949 at M will be considered as variable
+A spectral library will be created from the DIA runs and used to reanalyse them; .quant files will only be saved to disk during the first step
+When generating a spectral library, in silico predicted spectra will be retained if deemed more reliable than experimental ones
+MaxLFQ-based protein quantification disabled
+Normalisation disabled
+Mass accuracy will be fixed to 2e-05 (MS2) and 2e-05 (MS1)
+
+18 files will be processed
+[0:00] Loading FASTA C:\Raja\Database\Mouse_UniprotSP_Cano+Iso_052021.fasta
+[0:07] Processing FASTA
+[0:27] Assembling elution groups
+[0:43] 7942978 precursors generated
+[0:43] Protein names missing for some isoforms
+[0:43] Gene names missing for some isoforms
+[0:43] Library contains 17061 proteins, and 16681 genes
+[0:44] [1:06] [128:13] [144:18] [144:30] [144:42] Saving the library to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\report-lib.predicted.speclib
+[144:55] Initialising library
+
+[145:02] First pass: generating a spectral library from DIA data
+[145:02] File #1/18
+[145:02] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_01.raw
+[147:38] 6201310 library precursors are potentially detectable
+[147:39] Processing...
+[149:00] RT window set to 6.92699
+[149:00] Peak width: 6.208
+[149:00] Scan window radius set to 13
+[149:01] Recommended MS1 mass accuracy setting: 4.89683 ppm
+[156:24] Removing low confidence identifications
+[156:24] Removing interfering precursors
+[156:29] Training neural networks: 114819 targets, 79506 decoys
+[156:38] Number of IDs at 0.01 FDR: 48357
+[156:39] Calculating protein q-values
+[156:40] Number of genes identified at 1% FDR: 4949 (precursor-level), 4334 (protein-level) (inference performed using proteotypic peptides only)
+[156:40] Quantification
+[156:42] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_BCA_LT-IP_01_raw.quant.
+
+[156:45] File #2/18
+[156:45] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_02.raw
+[159:17] 6201310 library precursors are potentially detectable
+[159:18] Processing...
+[160:52] RT window set to 6.64408
+[160:53] Recommended MS1 mass accuracy setting: 4.958 ppm
+[168:26] Removing low confidence identifications
+[168:27] Removing interfering precursors
+[168:31] Training neural networks: 111174 targets, 76208 decoys
+[168:40] Number of IDs at 0.01 FDR: 47266
+[168:40] Calculating protein q-values
+[168:41] Number of genes identified at 1% FDR: 4647 (precursor-level), 4081 (protein-level) (inference performed using proteotypic peptides only)
+[168:42] Quantification
+[168:43] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_BCA_LT-IP_02_raw.quant.
+
+[168:46] File #3/18
+[168:46] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_03.raw
+[171:22] 6201310 library precursors are potentially detectable
+[171:23] Processing...
+[172:49] RT window set to 6.73068
+[172:49] Recommended MS1 mass accuracy setting: 4.29695 ppm
+[180:31] Removing low confidence identifications
+[180:31] Removing interfering precursors
+[180:36] Training neural networks: 109058 targets, 76165 decoys
+[180:44] Number of IDs at 0.01 FDR: 47148
+[180:45] Calculating protein q-values
+[180:46] Number of genes identified at 1% FDR: 4574 (precursor-level), 4000 (protein-level) (inference performed using proteotypic peptides only)
+[180:46] Quantification
+[180:48] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_BCA_LT-IP_03_raw.quant.
+
+[180:51] File #4/18
+[180:51] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_01.raw
+[183:10] 6201310 library precursors are potentially detectable
+[183:10] Processing...
+[184:47] RT window set to 7.0734
+[184:48] Recommended MS1 mass accuracy setting: 4.77839 ppm
+[190:55] Removing low confidence identifications
+[190:56] Removing interfering precursors
+[190:59] Training neural networks: 94367 targets, 66107 decoys
+[191:07] Number of IDs at 0.01 FDR: 37891
+[191:08] Calculating protein q-values
+[191:09] Number of genes identified at 1% FDR: 4313 (precursor-level), 3828 (protein-level) (inference performed using proteotypic peptides only)
+[191:09] Quantification
+[191:11] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_BCA_LT-MockIP_01_raw.quant.
+
+[191:13] File #5/18
+[191:13] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_02.raw
+[193:38] 6201310 library precursors are potentially detectable
+[193:39] Processing...
+[195:06] RT window set to 7.14732
+[195:07] Recommended MS1 mass accuracy setting: 4.90999 ppm
+[202:16] Removing low confidence identifications
+[202:16] Removing interfering precursors
+[202:21] Training neural networks: 103685 targets, 73910 decoys
+[202:29] Number of IDs at 0.01 FDR: 45628
+[202:30] Calculating protein q-values
+[202:31] Number of genes identified at 1% FDR: 4495 (precursor-level), 3893 (protein-level) (inference performed using proteotypic peptides only)
+[202:31] Quantification
+[202:33] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_BCA_LT-MockIP_02_raw.quant.
+
+[202:35] File #6/18
+[202:35] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_03.raw
+[205:06] 6201310 library precursors are potentially detectable
+[205:07] Processing...
+[206:37] RT window set to 7.29488
+[206:38] Recommended MS1 mass accuracy setting: 4.45677 ppm
+[214:16] Removing low confidence identifications
+[214:16] Removing interfering precursors
+[214:20] Training neural networks: 106123 targets, 73619 decoys
+[214:28] Number of IDs at 0.01 FDR: 44557
+[214:29] Calculating protein q-values
+[214:30] Number of genes identified at 1% FDR: 4300 (precursor-level), 3761 (protein-level) (inference performed using proteotypic peptides only)
+[214:30] Quantification
+[214:32] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_BCA_LT-MockIP_03_raw.quant.
+
+[214:35] File #7/18
+[214:35] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_01.raw
+[217:00] 6201310 library precursors are potentially detectable
+[217:01] Processing...
+[218:56] RT window set to 6.70478
+[218:57] Recommended MS1 mass accuracy setting: 5.60519 ppm
+[226:31] Removing low confidence identifications
+[226:31] Removing interfering precursors
+[226:34] Training neural networks: 90934 targets, 59525 decoys
+[226:41] Number of IDs at 0.01 FDR: 34636
+[226:41] Calculating protein q-values
+[226:42] Number of genes identified at 1% FDR: 4113 (precursor-level), 3570 (protein-level) (inference performed using proteotypic peptides only)
+[226:43] Quantification
+[226:44] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_Pepide-CBQCA_LT-IP_01_raw.quant.
+
+[226:48] File #8/18
+[226:48] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_02.raw
+[229:18] 6201310 library precursors are potentially detectable
+[229:18] Processing...
+[230:51] RT window set to 7.04127
+[230:52] Recommended MS1 mass accuracy setting: 4.94779 ppm
+[238:39] Removing low confidence identifications
+[238:39] Removing interfering precursors
+[238:44] Training neural networks: 110396 targets, 76663 decoys
+[238:52] Number of IDs at 0.01 FDR: 46116
+[238:53] Calculating protein q-values
+[238:54] Number of genes identified at 1% FDR: 4523 (precursor-level), 3990 (protein-level) (inference performed using proteotypic peptides only)
+[238:54] Quantification
+[238:56] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_Pepide-CBQCA_LT-IP_02_raw.quant.
+
+[238:59] File #9/18
+[238:59] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_03.raw
+[241:31] 6201310 library precursors are potentially detectable
+[241:32] Processing...
+[243:09] RT window set to 7.17328
+[243:10] Recommended MS1 mass accuracy setting: 5.2142 ppm
+[251:18] Removing low confidence identifications
+[251:19] Removing interfering precursors
+[251:23] Training neural networks: 110647 targets, 76964 decoys
+[251:31] Number of IDs at 0.01 FDR: 47151
+[251:32] Calculating protein q-values
+[251:33] Number of genes identified at 1% FDR: 4541 (precursor-level), 3932 (protein-level) (inference performed using proteotypic peptides only)
+[251:33] Quantification
+[251:35] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_Pepide-CBQCA_LT-IP_03_raw.quant.
+
+[251:38] File #10/18
+[251:38] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_01.raw
+[253:57] 6201310 library precursors are potentially detectable
+[253:58] Processing...
+[255:37] RT window set to 7.26784
+[255:38] Recommended MS1 mass accuracy setting: 5.03485 ppm
+[262:46] Removing low confidence identifications
+[262:46] Removing interfering precursors
+[262:50] Training neural networks: 101937 targets, 70465 decoys
+[262:58] Number of IDs at 0.01 FDR: 40739
+[262:59] Calculating protein q-values
+[263:00] Number of genes identified at 1% FDR: 4463 (precursor-level), 3903 (protein-level) (inference performed using proteotypic peptides only)
+[263:00] Quantification
+[263:02] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_Pepide-CBQCA_LT-MockIP_01_raw.quant.
+
+[263:04] File #11/18
+[263:04] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_02.raw
+[265:34] 6201310 library precursors are potentially detectable
+[265:35] Processing...
+[267:06] RT window set to 7.31584
+[267:07] Recommended MS1 mass accuracy setting: 5.04154 ppm
+[274:47] Removing low confidence identifications
+[274:47] Removing interfering precursors
+[274:52] Training neural networks: 110749 targets, 77206 decoys
+[275:00] Number of IDs at 0.01 FDR: 45829
+[275:01] Calculating protein q-values
+[275:02] Number of genes identified at 1% FDR: 4430 (precursor-level), 3853 (protein-level) (inference performed using proteotypic peptides only)
+[275:02] Quantification
+[275:04] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_Pepide-CBQCA_LT-MockIP_02_raw.quant.
+
+[275:07] File #12/18
+[275:07] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_03.raw
+[277:35] 6201310 library precursors are potentially detectable
+[277:35] Processing...
+[279:03] RT window set to 6.94188
+[279:04] Recommended MS1 mass accuracy setting: 4.60621 ppm
+[286:17] Removing low confidence identifications
+[286:17] Removing interfering precursors
+[286:21] Training neural networks: 102226 targets, 71481 decoys
+[286:30] Number of IDs at 0.01 FDR: 43217
+[286:30] Calculating protein q-values
+[286:31] Number of genes identified at 1% FDR: 4160 (precursor-level), 3642 (protein-level) (inference performed using proteotypic peptides only)
+[286:32] Quantification
+[286:33] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_Pepide-CBQCA_LT-MockIP_03_raw.quant.
+
+[286:37] File #13/18
+[286:37] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_01.raw
+[289:08] 6201310 library precursors are potentially detectable
+[289:09] Processing...
+[290:15] RT window set to 6.86613
+[290:16] Recommended MS1 mass accuracy setting: 5.23483 ppm
+[296:53] Removing low confidence identifications
+[296:53] Removing interfering precursors
+[296:58] Training neural networks: 123492 targets, 92156 decoys
+[297:07] Number of IDs at 0.01 FDR: 58005
+[297:08] Calculating protein q-values
+[297:09] Number of genes identified at 1% FDR: 5651 (precursor-level), 5022 (protein-level) (inference performed using proteotypic peptides only)
+[297:10] Quantification
+[297:12] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_BCA_LT-WCL_01_raw.quant.
+
+[297:15] File #14/18
+[297:15] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_02.raw
+[299:38] 6201310 library precursors are potentially detectable
+[299:39] Processing...
+[300:47] RT window set to 6.95206
+[300:48] Recommended MS1 mass accuracy setting: 5.23983 ppm
+[308:19] Removing low confidence identifications
+[308:19] Removing interfering precursors
+[308:25] Training neural networks: 136367 targets, 97534 decoys
+[308:35] Number of IDs at 0.01 FDR: 59719
+[308:36] Calculating protein q-values
+[308:37] Number of genes identified at 1% FDR: 5645 (precursor-level), 5041 (protein-level) (inference performed using proteotypic peptides only)
+[308:37] Quantification
+[308:39] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_BCA_LT-WCL_02_raw.quant.
+
+[308:42] File #15/18
+[308:42] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_03.raw
+[311:12] 6201310 library precursors are potentially detectable
+[311:13] Processing...
+[312:19] RT window set to 7.12493
+[312:20] Recommended MS1 mass accuracy setting: 5.45969 ppm
+[319:30] Removing low confidence identifications
+[319:30] Removing interfering precursors
+[319:36] Training neural networks: 134561 targets, 96715 decoys
+[319:46] Number of IDs at 0.01 FDR: 59832
+[319:47] Calculating protein q-values
+[319:48] Number of genes identified at 1% FDR: 5789 (precursor-level), 5133 (protein-level) (inference performed using proteotypic peptides only)
+[319:49] Quantification
+[319:51] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_BCA_LT-WCL_03_raw.quant.
+
+[319:53] File #16/18
+[319:53] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_01.raw
+[322:18] 6201310 library precursors are potentially detectable
+[322:19] Processing...
+[323:27] RT window set to 6.79877
+[323:28] Recommended MS1 mass accuracy setting: 5.18055 ppm
+[330:33] Removing low confidence identifications
+[330:33] Removing interfering precursors
+[330:39] Training neural networks: 137050 targets, 97645 decoys
+[330:49] Number of IDs at 0.01 FDR: 59236
+[330:50] Calculating protein q-values
+[330:51] Number of genes identified at 1% FDR: 5627 (precursor-level), 5100 (protein-level) (inference performed using proteotypic peptides only)
+[330:51] Quantification
+[330:53] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_Pepide-CBQCA_LT-WCL_01_raw.quant.
+
+[330:56] File #17/18
+[330:56] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_02.raw
+[333:18] 6201310 library precursors are potentially detectable
+[333:19] Processing...
+[334:28] RT window set to 7.03222
+[334:29] Recommended MS1 mass accuracy setting: 5.22832 ppm
+[341:43] Removing low confidence identifications
+[341:43] Removing interfering precursors
+[341:49] Training neural networks: 135991 targets, 97597 decoys
+[341:59] Number of IDs at 0.01 FDR: 59329
+[342:00] Calculating protein q-values
+[342:01] Number of genes identified at 1% FDR: 5585 (precursor-level), 5017 (protein-level) (inference performed using proteotypic peptides only)
+[342:01] Quantification
+[342:03] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_Pepide-CBQCA_LT-WCL_02_raw.quant.
+
+[342:06] File #18/18
+[342:06] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_03.raw
+[344:32] 6201310 library precursors are potentially detectable
+[344:33] Processing...
+[345:50] RT window set to 6.77287
+[345:51] Recommended MS1 mass accuracy setting: 5.72475 ppm
+[353:21] Removing low confidence identifications
+[353:21] Removing interfering precursors
+[353:27] Training neural networks: 137425 targets, 98218 decoys
+[353:37] Number of IDs at 0.01 FDR: 60618
+[353:38] Calculating protein q-values
+[353:39] Number of genes identified at 1% FDR: 5742 (precursor-level), 5141 (protein-level) (inference performed using proteotypic peptides only)
+[353:39] Quantification
+[353:41] Quantification information saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA/C__Raja_DIA-NN searches_June 2022_LT-CBQCA-Test_DIA_RN-DS_220106_Pepide-CBQCA_LT-WCL_03_raw.quant.
+
+[353:44] Cross-run analysis
+[353:44] Reading quantification information: 18 files
+[353:49] Quantifying peptides
+[353:49] Assembling protein groups
+[353:56] Quantifying proteins
+[353:57] Calculating q-values for protein and gene groups
+[354:00] Calculating global q-values for protein and gene groups
+[354:01] Writing report
+[355:01] Report saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports-first-pass.tsv.
+[355:01] Saving precursor levels matrix
+[355:03] Precursor levels matrix (1% precursor and protein group FDR) saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports-first-pass.pr_matrix.tsv.
+[355:03] Saving protein group levels matrix
+[355:03] Protein group levels matrix (1% precursor FDR and protein group FDR) saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports-first-pass.pg_matrix.tsv.
+[355:03] Saving gene group levels matrix
+[355:03] Gene groups levels matrix (1% precursor FDR and protein group FDR) saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports-first-pass.gg_matrix.tsv.
+[355:03] Saving unique genes levels matrix
+[355:03] Unique genes levels matrix (1% precursor FDR and protein group FDR) saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports-first-pass.unique_genes_matrix.tsv.
+[355:03] Stats report saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports-first-pass.stats.tsv
+[355:03] Generating spectral library:
+[355:03] Reading quantification information: 18 files
+[355:08] Assembling protein groups
+[355:16] 95970 precursors passing the FDR threshold are to be extracted
+[355:16] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_01.raw
+[357:40] 6201310 library precursors are potentially detectable
+[357:41] 1784 spectra added to the library
+[357:42] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_02.raw
+[360:12] 6201310 library precursors are potentially detectable
+[360:14] 2711 spectra added to the library
+[360:15] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_03.raw
+[362:47] 6201310 library precursors are potentially detectable
+[362:48] 2577 spectra added to the library
+[362:50] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_01.raw
+[365:05] 6201310 library precursors are potentially detectable
+[365:06] 1819 spectra added to the library
+[365:08] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_02.raw
+[367:32] 6201310 library precursors are potentially detectable
+[367:33] 4696 spectra added to the library
+[367:35] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_03.raw
+[370:02] 6201310 library precursors are potentially detectable
+[370:03] 2960 spectra added to the library
+[370:04] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_01.raw
+[372:22] 6201310 library precursors are potentially detectable
+[372:23] 1091 spectra added to the library
+[372:25] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_02.raw
+[374:54] 6201310 library precursors are potentially detectable
+[374:55] 1990 spectra added to the library
+[374:56] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_03.raw
+[377:33] 6201310 library precursors are potentially detectable
+[377:35] 6791 spectra added to the library
+[377:36] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_01.raw
+[379:57] 6201310 library precursors are potentially detectable
+[379:58] 1480 spectra added to the library
+[379:59] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_02.raw
+[382:28] 6201310 library precursors are potentially detectable
+[382:29] 5230 spectra added to the library
+[382:31] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_03.raw
+[384:58] 6201310 library precursors are potentially detectable
+[384:59] 3032 spectra added to the library
+[385:01] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_01.raw
+[387:21] 6201310 library precursors are potentially detectable
+[387:22] 2750 spectra added to the library
+[387:24] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_02.raw
+[389:44] 6201310 library precursors are potentially detectable
+[389:46] 6673 spectra added to the library
+[389:47] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_03.raw
+[392:08] 6201310 library precursors are potentially detectable
+[392:10] 7183 spectra added to the library
+[392:11] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_01.raw
+[394:34] 6201310 library precursors are potentially detectable
+[394:35] 3749 spectra added to the library
+[394:37] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_02.raw
+[396:58] 6201310 library precursors are potentially detectable
+[397:01] 7635 spectra added to the library
+[397:02] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_03.raw
+[399:24] 6201310 library precursors are potentially detectable
+[399:26] 7386 spectra added to the library
+[399:28] Saving spectral library to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\report-lib.tsv
+[399:40] 95970 precursors saved
+[399:40] Loading the generated library and saving it in the .speclib format
+[399:40] Loading spectral library C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\report-lib.tsv
+[399:47] Spectral library loaded: 11939 protein isoforms, 10012 protein groups and 95970 precursors in 79772 elution groups.
+[399:47] Loading protein annotations from FASTA C:\Raja\Database\Mouse_UniprotSP_Cano+Iso_052021.fasta
+[399:48] Gene names missing for some isoforms
+[399:48] Library contains 8128 proteins, and 7978 genes
+[399:48] Saving the library to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\report-lib.tsv.speclib
+
+[399:55] Second pass: using the newly created spectral library to reanalyse the data
+[399:55] File #1/18
+[399:55] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_01.raw
+[402:06] 95970 library precursors are potentially detectable
+[402:06] Processing...
+[402:07] RT window set to 1.9057
+[402:07] Recommended MS1 mass accuracy setting: 5.25638 ppm
+[402:10] Removing low confidence identifications
+[402:10] Removing interfering precursors
+[402:12] Training neural networks: 84932 targets, 68287 decoys
+[402:20] Number of IDs at 0.01 FDR: 66193
+[402:21] Calculating protein q-values
+[402:21] Number of genes identified at 1% FDR: 5953 (precursor-level), 5208 (protein-level) (inference performed using proteotypic peptides only)
+[402:21] Quantification
+
+[402:23] File #2/18
+[402:23] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_02.raw
+[404:33] 95970 library precursors are potentially detectable
+[404:34] Processing...
+[404:36] RT window set to 1.9029
+[404:36] Recommended MS1 mass accuracy setting: 4.99386 ppm
+[404:39] Removing low confidence identifications
+[404:39] Removing interfering precursors
+[404:41] Training neural networks: 84104 targets, 69315 decoys
+[404:48] Number of IDs at 0.01 FDR: 63877
+[404:49] Calculating protein q-values
+[404:49] Number of genes identified at 1% FDR: 5819 (precursor-level), 5046 (protein-level) (inference performed using proteotypic peptides only)
+[404:49] Quantification
+
+[404:51] File #3/18
+[404:51] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-IP_03.raw
+[407:05] 95970 library precursors are potentially detectable
+[407:05] Processing...
+[407:07] RT window set to 1.88556
+[407:08] Recommended MS1 mass accuracy setting: 4.50252 ppm
+[407:11] Removing low confidence identifications
+[407:11] Removing interfering precursors
+[407:13] Training neural networks: 83165 targets, 69155 decoys
+[407:20] Number of IDs at 0.01 FDR: 61176
+[407:21] Calculating protein q-values
+[407:21] Number of genes identified at 1% FDR: 5683 (precursor-level), 4864 (protein-level) (inference performed using proteotypic peptides only)
+[407:21] Quantification
+
+[407:23] File #4/18
+[407:23] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_01.raw
+[409:24] 95970 library precursors are potentially detectable
+[409:24] Processing...
+[409:26] RT window set to 1.89272
+[409:26] Recommended MS1 mass accuracy setting: 4.89104 ppm
+[409:29] Removing low confidence identifications
+[409:29] Removing interfering precursors
+[409:31] Training neural networks: 76664 targets, 59623 decoys
+[409:39] Number of IDs at 0.01 FDR: 53182
+[409:39] Calculating protein q-values
+[409:40] Number of genes identified at 1% FDR: 5408 (precursor-level), 4664 (protein-level) (inference performed using proteotypic peptides only)
+[409:40] Quantification
+
+[409:41] File #5/18
+[409:41] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_02.raw
+[411:47] 95970 library precursors are potentially detectable
+[411:47] Processing...
+[411:48] RT window set to 1.89067
+[411:48] Recommended MS1 mass accuracy setting: 4.87193 ppm
+[411:52] Removing low confidence identifications
+[411:52] Removing interfering precursors
+[411:54] Training neural networks: 82983 targets, 66957 decoys
+[412:01] Number of IDs at 0.01 FDR: 61549
+[412:02] Calculating protein q-values
+[412:02] Number of genes identified at 1% FDR: 5636 (precursor-level), 4838 (protein-level) (inference performed using proteotypic peptides only)
+[412:02] Quantification
+
+[412:04] File #6/18
+[412:04] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-MockIP_03.raw
+[414:14] 95970 library precursors are potentially detectable
+[414:14] Processing...
+[414:16] RT window set to 1.90808
+[414:16] Recommended MS1 mass accuracy setting: 4.70769 ppm
+[414:19] Removing low confidence identifications
+[414:19] Removing interfering precursors
+[414:21] Training neural networks: 82020 targets, 67294 decoys
+[414:28] Number of IDs at 0.01 FDR: 59383
+[414:28] Calculating protein q-values
+[414:29] Number of genes identified at 1% FDR: 5504 (precursor-level), 4655 (protein-level) (inference performed using proteotypic peptides only)
+[414:29] Quantification
+
+[414:31] File #7/18
+[414:31] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_01.raw
+[416:36] 95970 library precursors are potentially detectable
+[416:36] Processing...
+[416:38] RT window set to 1.87327
+[416:38] Recommended MS1 mass accuracy setting: 5.74078 ppm
+[416:42] Removing low confidence identifications
+[416:42] Removing interfering precursors
+[416:44] Training neural networks: 81591 targets, 69823 decoys
+[416:49] Number of IDs at 0.01 FDR: 51620
+[416:50] Calculating protein q-values
+[416:50] Number of genes identified at 1% FDR: 5284 (precursor-level), 4560 (protein-level) (inference performed using proteotypic peptides only)
+[416:50] Quantification
+
+[416:52] File #8/18
+[416:52] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_02.raw
+[419:10] 95970 library precursors are potentially detectable
+[419:10] Processing...
+[419:12] RT window set to 1.88702
+[419:12] Recommended MS1 mass accuracy setting: 4.79373 ppm
+[419:16] Removing low confidence identifications
+[419:16] Removing interfering precursors
+[419:18] Training neural networks: 83470 targets, 68687 decoys
+[419:24] Number of IDs at 0.01 FDR: 61622
+[419:25] Calculating protein q-values
+[419:25] Number of genes identified at 1% FDR: 5622 (precursor-level), 4835 (protein-level) (inference performed using proteotypic peptides only)
+[419:25] Quantification
+
+[419:27] File #9/18
+[419:27] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-IP_03.raw
+[421:42] 95970 library precursors are potentially detectable
+[421:42] Processing...
+[421:44] RT window set to 1.90752
+[421:44] Recommended MS1 mass accuracy setting: 4.9317 ppm
+[421:47] Removing low confidence identifications
+[421:47] Removing interfering precursors
+[421:49] Training neural networks: 82943 targets, 68907 decoys
+[421:55] Number of IDs at 0.01 FDR: 61023
+[421:56] Calculating protein q-values
+[421:56] Number of genes identified at 1% FDR: 5644 (precursor-level), 4855 (protein-level) (inference performed using proteotypic peptides only)
+[421:56] Quantification
+
+[421:58] File #10/18
+[421:58] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_01.raw
+[423:57] 95970 library precursors are potentially detectable
+[423:57] Processing...
+[423:59] RT window set to 1.89033
+[423:59] Recommended MS1 mass accuracy setting: 5.21067 ppm
+[424:02] Removing low confidence identifications
+[424:02] Removing interfering precursors
+[424:04] Training neural networks: 80992 targets, 65264 decoys
+[424:10] Number of IDs at 0.01 FDR: 57215
+[424:11] Calculating protein q-values
+[424:11] Number of genes identified at 1% FDR: 5603 (precursor-level), 4790 (protein-level) (inference performed using proteotypic peptides only)
+[424:11] Quantification
+
+[424:13] File #11/18
+[424:13] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_02.raw
+[426:18] 95970 library precursors are potentially detectable
+[426:18] Processing...
+[426:19] RT window set to 1.90836
+[426:19] Recommended MS1 mass accuracy setting: 4.98529 ppm
+[426:23] Removing low confidence identifications
+[426:23] Removing interfering precursors
+[426:25] Training neural networks: 83760 targets, 68341 decoys
+[426:31] Number of IDs at 0.01 FDR: 62172
+[426:32] Calculating protein q-values
+[426:32] Number of genes identified at 1% FDR: 5601 (precursor-level), 4816 (protein-level) (inference performed using proteotypic peptides only)
+[426:32] Quantification
+
+[426:34] File #12/18
+[426:34] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-MockIP_03.raw
+[428:41] 95970 library precursors are potentially detectable
+[428:41] Processing...
+[428:43] RT window set to 1.90511
+[428:43] Recommended MS1 mass accuracy setting: 4.72654 ppm
+[428:47] Removing low confidence identifications
+[428:47] Removing interfering precursors
+[428:49] Training neural networks: 81677 targets, 67454 decoys
+[428:55] Number of IDs at 0.01 FDR: 58239
+[428:56] Calculating protein q-values
+[428:56] Number of genes identified at 1% FDR: 5386 (precursor-level), 4583 (protein-level) (inference performed using proteotypic peptides only)
+[428:56] Quantification
+
+[428:58] File #13/18
+[428:58] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_01.raw
+[430:58] 95970 library precursors are potentially detectable
+[430:58] Processing...
+[430:59] RT window set to 1.88264
+[430:59] Recommended MS1 mass accuracy setting: 5.064 ppm
+[431:02] Removing low confidence identifications
+[431:02] Removing interfering precursors
+[431:05] Training neural networks: 86420 targets, 68353 decoys
+[431:11] Number of IDs at 0.01 FDR: 72760
+[431:12] Calculating protein q-values
+[431:12] Number of genes identified at 1% FDR: 6383 (precursor-level), 5629 (protein-level) (inference performed using proteotypic peptides only)
+[431:12] Quantification
+
+[431:14] File #14/18
+[431:14] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_02.raw
+[433:22] 95970 library precursors are potentially detectable
+[433:22] Processing...
+[433:23] RT window set to 1.89568
+[433:23] Recommended MS1 mass accuracy setting: 5.11844 ppm
+[433:26] Removing low confidence identifications
+[433:26] Removing interfering precursors
+[433:28] Training neural networks: 87445 targets, 70820 decoys
+[433:34] Number of IDs at 0.01 FDR: 74111
+[433:35] Calculating protein q-values
+[433:35] Number of genes identified at 1% FDR: 6412 (precursor-level), 5654 (protein-level) (inference performed using proteotypic peptides only)
+[433:36] Quantification
+
+[433:38] File #15/18
+[433:38] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_BCA_LT-WCL_03.raw
+[435:42] 95970 library precursors are potentially detectable
+[435:42] Processing...
+[435:43] RT window set to 1.87196
+[435:43] Recommended MS1 mass accuracy setting: 4.70053 ppm
+[435:46] Removing low confidence identifications
+[435:46] Removing interfering precursors
+[435:49] Training neural networks: 86553 targets, 69300 decoys
+[435:54] Number of IDs at 0.01 FDR: 72933
+[435:55] Calculating protein q-values
+[435:56] Number of genes identified at 1% FDR: 6361 (precursor-level), 5617 (protein-level) (inference performed using proteotypic peptides only)
+[435:56] Quantification
+
+[435:58] File #16/18
+[435:58] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_01.raw
+[438:06] 95970 library precursors are potentially detectable
+[438:06] Processing...
+[438:07] RT window set to 1.90147
+[438:07] Recommended MS1 mass accuracy setting: 4.99728 ppm
+[438:10] Removing low confidence identifications
+[438:10] Removing interfering precursors
+[438:13] Training neural networks: 87359 targets, 70699 decoys
+[438:19] Number of IDs at 0.01 FDR: 73891
+[438:20] Calculating protein q-values
+[438:20] Number of genes identified at 1% FDR: 6410 (precursor-level), 5577 (protein-level) (inference performed using proteotypic peptides only)
+[438:20] Quantification
+
+[438:22] File #17/18
+[438:22] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_02.raw
+[440:27] 95970 library precursors are potentially detectable
+[440:27] Processing...
+[440:28] RT window set to 1.8841
+[440:28] Recommended MS1 mass accuracy setting: 5.57233 ppm
+[440:31] Removing low confidence identifications
+[440:31] Removing interfering precursors
+[440:34] Training neural networks: 87238 targets, 70459 decoys
+[440:40] Number of IDs at 0.01 FDR: 73668
+[440:41] Calculating protein q-values
+[440:41] Number of genes identified at 1% FDR: 6382 (precursor-level), 5593 (protein-level) (inference performed using proteotypic peptides only)
+[440:41] Quantification
+
+[440:43] File #18/18
+[440:43] Loading run C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\RN-DS_220106_Pepide-CBQCA_LT-WCL_03.raw
+[442:45] 95970 library precursors are potentially detectable
+[442:45] Processing...
+[442:46] RT window set to 1.88193
+[442:46] Recommended MS1 mass accuracy setting: 5.26334 ppm
+[442:49] Removing low confidence identifications
+[442:49] Removing interfering precursors
+[442:52] Training neural networks: 87338 targets, 71289 decoys
+[442:58] Number of IDs at 0.01 FDR: 73439
+[442:59] Calculating protein q-values
+[442:59] Number of genes identified at 1% FDR: 6343 (precursor-level), 5624 (protein-level) (inference performed using proteotypic peptides only)
+[442:59] Quantification
+
+[443:01] Cross-run analysis
+[443:01] Reading quantification information: 18 files
+[443:05] Quantifying peptides
+[443:06] Quantifying proteins
+[443:06] Calculating q-values for protein and gene groups
+[443:09] Calculating global q-values for protein and gene groups
+[443:10] Writing report
+[444:21] Report saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports.tsv.
+[444:21] Saving precursor levels matrix
+[444:23] Precursor levels matrix (1% precursor and protein group FDR) saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports.pr_matrix.tsv.
+[444:23] Saving protein group levels matrix
+[444:23] Protein group levels matrix (1% precursor FDR and protein group FDR) saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports.pg_matrix.tsv.
+[444:23] Saving gene group levels matrix
+[444:23] Gene groups levels matrix (1% precursor FDR and protein group FDR) saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports.gg_matrix.tsv.
+[444:23] Saving unique genes levels matrix
+[444:23] Unique genes levels matrix (1% precursor FDR and protein group FDR) saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports.unique_genes_matrix.tsv.
+[444:23] Stats report saved to C:\Raja\DIA-NN searches\June 2022\LT-CBQCA-Test_DIA\Reports.stats.tsv
