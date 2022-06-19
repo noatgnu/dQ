@@ -2,6 +2,7 @@ import io
 import matplotlib
 import sys
 import sklearn.neighbors
+import time
 from goatools.anno.gaf_reader import GafReader
 from goatools.obo_parser import GODag
 
@@ -137,6 +138,8 @@ class File:
 
 class Diann:
     def __init__(self, folder_path, temp_folder_path=".", fasta_lib_path="", goa_file="", go_obo=""):
+        self.temp_folder_path = temp_folder_path
+        self.progress_file = open(os.path.join(self.temp_folder_path, "progress.txt"), "wt")
         self.folder_path = folder_path
         self.fasta_lib_path = fasta_lib_path
         self.goa_file = goa_file
@@ -147,13 +150,14 @@ class Diann:
         self.pg = {}
         self.coverage = pd.DataFrame()
         self.modification = pd.DataFrame()
-        self.temp_folder_path = temp_folder_path
+
         self.process_data()
         self.joined_pr = self.join_df(self.pr)
         self.joined_pg = self.join_df(self.pg)
         self.unimod_mapper = UnimodMapper()
         if self.fasta_lib_path == "":
             self.fasta_lib = self.get_fasta_lib()
+
         else:
             self.fasta_lib = self.load_fasta_library()
         self.draw_null()
@@ -166,6 +170,15 @@ class Diann:
         self.draw_cv(self.joined_pg, os.path.join(self.temp_folder_path, "cv.pg.pdf"), ["Condition", "Protein.Group"])
         self.protein_coverage()
         self.modification_map()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self):
+        self.progress_file.close()
+
+    def write_progress(self, message):
+        self.progress_file.write(str(time.time()) + "\t" + message + "\n")
 
     def join_df(self, df_dict):
         combined_pr = []
@@ -210,6 +223,7 @@ class Diann:
 
     def parse_log(self):
         file_location = {}
+        self.write_progress("Began parsing log file")
         for l in glob(os.path.join(self.folder_path, "**", "*"), recursive=True):
             print(l)
             if l.endswith("Reports.log.txt"):
@@ -233,19 +247,24 @@ class Diann:
                                     file = match.group(1)
                                     if file not in file_location[folder]:
                                         file_location[folder].append(file)
+        self.write_progress("Completed parsing log file")
         return file_location
 
     def process_pr(self, folder_path, file_list):
+        self.write_progress("Began processing pr_matrix file")
         pr_file = os.path.join(folder_path, "Reports.pr_matrix.tsv")
         df = pd.read_csv(pr_file, sep="\t")
         initial_check_pr(df, file_list)
+        self.write_progress("Completed processing pr_matrix file")
         return df
 
     def process_pg(self, folder_path, file_list):
+        self.write_progress("Began processing pg_matrix file")
         pg_file = os.path.join(folder_path, "Reports.pg_matrix.tsv")
         df = pd.read_csv(pg_file, sep="\t")
         initial_check_pg(df, file_list)
         if self.goa_file != "" and self.go_obo != "":
+            self.write_progress("Began adding gene ontology definitions to pg_matrix file")
             a = set()
             dic = {}
             for prs in df["Protein.Group"]:
@@ -272,6 +291,8 @@ class Diann:
 
             for ns in gos:
                 df["GO.{}".format(ns)] = Series(gos[ns], index=df.index)
+            self.write_progress("Completed adding gene ontology definitions to pg_matrix file")
+        self.write_progress("Began processing pg_matrix file")
         return df
 
     def process_data(self):
@@ -280,6 +301,7 @@ class Diann:
             self.pg[l] = self.process_pg(l, self.raw_file_location[l])
             _, folder = os.path.split(l)
             os.makedirs(os.path.join(self.temp_folder_path, folder), exist_ok=True)
+
             self.draw_correlation_matrix(self.pr[l], os.path.join(self.temp_folder_path, folder))
             peptide = self.pr[l].groupby(["Protein.Group"]).size()
             peptide = peptide.reset_index()
@@ -294,6 +316,7 @@ class Diann:
 
     def draw_null(self):
         for l in self.raw_file_location:
+            self.write_progress("Began checking for null values")
             _, folder = os.path.split(l)
             os.makedirs(os.path.join(self.temp_folder_path, folder), exist_ok=True)
             self.draw_report_stats(l, os.path.join(self.temp_folder_path, folder))
@@ -308,8 +331,10 @@ class Diann:
                 data=self.pg[l],
                 path=os.path.join(folder, "temp.pg_matrix.countnull.pdf"),
                 file_list=self.raw_file_location[l])
+            self.write_progress("Completed checking for null values")
 
     def draw_report_stats(self, folder, path):
+        self.write_progress("Began drawing plot for protein identified number")
         report_path = os.path.join(folder, "Reports.stats.tsv")
         df = pd.read_csv(report_path, sep="\t")
         for i, r in df.iterrows():
@@ -327,6 +352,7 @@ class Diann:
                      df_mean, aes(x="Condition", ymin="Count-Error", ymax="Count+Error")) + \
                  scale_fill_brewer(type="qual", palette="Pastel1") + theme_minimal()
         result.save(os.path.join(path, "proteins.identified.pdf"))
+        self.write_progress("Completed drawing plot for protein identified number")
 
     def _draw_null(self, folder, data, path, file_list):
         data_pr = get_count_null(data, file_list)
@@ -355,18 +381,22 @@ class Diann:
         # result.save(path, "pdf", dpi=600, width=7, height=10)
 
     def draw_profile(self, data, path):
+        self.write_progress("Began drawing profile plot")
         d = data.copy()
         d["log2Intensity"] = np.log2(d["Intensity"])
         result = ggplot(d, aes(x='Sample', y='log2Intensity', fill='Condition')) \
                  + geom_boxplot() + theme_minimal() + theme(axis_text_x=element_text(rotation=90))
         result.save(path, "pdf", width=10, height=15)
+        self.write_progress("Completed drawing profile plot")
 
     def draw_total_intensity(self, data, path):
+        self.write_progress("Began drawing total intensity plot")
         total_intensity = data.groupby(["Sample", "Condition"])["Intensity"].sum()
         total_intensity = total_intensity.reset_index()
         result = ggplot(total_intensity, aes(x="Sample", y="Intensity", fill="Condition")) \
                  + geom_col(colour="black") + theme_minimal() + theme(axis_text_x=element_text(rotation=90))
         result.save(path, "pdf", width=10, height=15)
+        self.write_progress("Completed drawing total intensity plot")
 
     def draw_detected_genes(self, data, path):
         genes = data[data["Intensity"].notnull()]
@@ -408,6 +438,7 @@ class Diann:
                     yield p, None, proteins["Genes"]
 
     def protein_coverage(self):
+        self.write_progress("Began analyzing protein coverage")
         cover_dict = {}
         gene_dict = {}
         for i, r in self.joined_pr.iterrows():
@@ -445,8 +476,10 @@ class Diann:
                           columns=["Protein", "Length Covered", "Length", "Covered Proportion", "Gene names", "Sample"])
         self.coverage = df
         self.coverage.to_csv(os.path.join(self.temp_folder_path, "coverage.txt"), sep="\t", index=False)
+        self.write_progress("Completed analyzing protein coverage")
 
     def modification_map(self):
+        self.write_progress("Began mapping modification sites")
         mod_dict = {}
         result = []
         for i, r in self.joined_pr.iterrows():
@@ -488,6 +521,7 @@ class Diann:
                                 index=True)
         self.modification.rename(columns={0: "Instance counts"}, inplace=True)
         self.modification.to_csv(os.path.join(self.temp_folder_path, "modification.map.txt"), sep="\t", index=False)
+        self.write_progress("Completed mapping modification sites")
 
     def calculate_CV(self, joined_df: pd.DataFrame, group):
         arr = []
@@ -499,6 +533,7 @@ class Diann:
         return df
 
     def draw_cv_density(self, df: pd.DataFrame, filename):
+        self.write_progress("Began creating CV plot")
         plots = []
         custom_legend = {}
         with PdfPages(filename) as pdf_pages:
@@ -530,6 +565,7 @@ class Diann:
         #          + scale_color_brewer(
         #     type="qual", palette="Pastel1", labels=custom_legend) + theme_minimal()] + plots
         # save_as_pdf_pages(plots, filename)
+        self.write_progress("Completed creating CV plot")
 
     def draw_cv(self, joined_df: pd.DataFrame, filename, group):
         cv = self.calculate_CV(joined_df, group)
@@ -537,6 +573,7 @@ class Diann:
         self.draw_cv_density(cv, filename)
 
     def draw_correlation_matrix(self, df: pd.DataFrame, path):
+        self.write_progress("Began creating correlation matrix")
         l, folder = os.path.split(path)
         corr_mat = df[df.columns[11:]].corr()
         clustered = cluster_corr(corr_mat)
@@ -556,8 +593,10 @@ class Diann:
         plots = ggplot(melted, aes(x="X", y="Y", fill="Intensity")) + geom_tile() + theme_minimal() \
                 + theme(axis_text_x=element_text(rotation=90))
         plots.save(os.path.join(path, "correlation_matrix.pdf"))
+        self.write_progress("Completed creating correlation matrix")
 
     def get_fasta_lib(self):
+        self.write_progress("Began getting sequence data from UniProt database")
         accessions = set()
         for i in self.joined_pg["Protein.Group"]:
             accs = i.split(";")
@@ -583,9 +622,11 @@ class Diann:
                 else:
                     current_seq += line
             seqs[current_id[:]] = current_seq[:]
+        self.write_progress("Completed getting sequence data from UniProt database")
         return seqs
 
     def pca(self, df: pd.DataFrame, path):
+        self.write_progress("Began PCA analysis")
         d = df.copy()
         d["Sample"] = d["Sample"].astype(str)
         a = d["Sample"].unique()
@@ -609,4 +650,4 @@ class Diann:
         new_df.to_csv(os.path.join(path, "pca.csv"), index=False)
         plot = ggplot(new_df, aes(x=pc1, y=pc2, fill="Condition", colour="Condition")) + geom_point(alpha=0.50, size=2) + theme_minimal()
         plot.save(os.path.join(path, "pca.pdf"))
-
+        self.write_progress("Completed PCA analysis")

@@ -1,10 +1,11 @@
 import logging
 import os
+import shutil
 from abc import ABC
 from urllib.parse import unquote
 from uuid import uuid4
 
-from tornado import gen
+from tornado import gen, iostream
 
 import settings
 from tornado.web import RequestHandler, stream_request_body
@@ -71,5 +72,28 @@ class DiannHandler(BaseHandler):
     @gen.coroutine
     def get(self, uniqueID):
         folder_path = os.path.join(settings.location, uniqueID)
-        Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN"))
+        with Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN")) as diann:
+            print("diann")
+        shutil.make_archive(os.path.join(folder_path, uniqueID+".zip"), "zip", os.path.join(folder_path, "DIANN"))
         self.write(uniqueID)
+
+
+class ZipHandler(BaseHandler):
+    @gen.coroutine
+    def get(self, uniqueID):
+        folder_path = os.path.join(settings.location, uniqueID)
+        filename = os.path.join(folder_path, uniqueID + ".zip")
+        chunk_size = 1024 * 1024 * 1
+        with open(filename, 'rb') as f:
+            while True:
+                chunk = f.read(chunk_size)
+                if not chunk:
+                    break
+                try:
+                    self.write(chunk)
+                    yield self.flush()
+                except iostream.StreamClosedError:
+                    break
+                finally:
+                    del chunk
+                    yield gen.sleep(0.000000001)
