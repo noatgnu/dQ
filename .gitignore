@@ -5,6 +5,7 @@
 *.pyc
 *.txt
 *.tsv
+data
 
 ### Git ###
 # Created by git for backups. To disable backups in Git:
