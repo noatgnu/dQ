@@ -3,6 +3,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm+all,git
 
 *.pyc
+*.txt
+*.tsv
 
 ### Git ###
 # Created by git for backups. To disable backups in Git:

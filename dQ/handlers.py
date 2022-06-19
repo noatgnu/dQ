@@ -68,17 +68,17 @@ class UploadHandler(BaseHandler):
         self.write("OK")
 
 
-class DiannHandler(BaseHandler):
+class DiannHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID):
         folder_path = os.path.join(settings.location, uniqueID)
         with Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN")) as diann:
             print("diann")
-        shutil.make_archive(os.path.join(folder_path, uniqueID+".zip"), "zip", os.path.join(folder_path, "DIANN"))
+        shutil.make_archive(os.path.join(folder_path, uniqueID), "zip", os.path.join(folder_path, "DIANN"))
         self.write(uniqueID)
 
 
-class ZipHandler(BaseHandler):
+class ZipHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID):
         folder_path = os.path.join(settings.location, uniqueID)
@@ -97,3 +97,16 @@ class ZipHandler(BaseHandler):
                 finally:
                     del chunk
                     yield gen.sleep(0.000000001)
+
+
+class CheckStatusHandler(BaseHandler, ABC):
+    @gen.coroutine
+    def get(self, uniqueID):
+        folder_path = os.path.join(settings.location, uniqueID)
+        file_path = os.path.join(folder_path, "DIANN", "progress.txt")
+        if os.path.exists(file_path):
+            with open(file_path, "r") as infile:
+                self.write(infile.read())
+        else:
+            self.set_status(404)
+            self.write("Not exists")

@@ -174,11 +174,12 @@ class Diann:
     def __enter__(self):
         return self
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self.progress_file.close()
 
     def write_progress(self, message):
         self.progress_file.write(str(time.time()) + "\t" + message + "\n")
+        self.progress_file.flush()
 
     def join_df(self, df_dict):
         combined_pr = []

@@ -6,7 +6,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application
 from tornado.options import define, options
 
-from dQ.handlers import MainHandler, UploadHandler, DiannHandler
+from dQ.handlers import MainHandler, UploadHandler, DiannHandler, ZipHandler, CheckStatusHandler
 
 define("port", default=8000, help="Port number")
 
@@ -17,10 +17,12 @@ routes = [
     (r"/", MainHandler),
     (r"/api/upload/", UploadHandler),
     (r"/api/diann/(.*)", DiannHandler),
+    (r"/api/download/(.*)", ZipHandler),
+    (r"/api/status/(.*)", CheckStatusHandler),
 ]
 
 settings = {
-    "debug": True,
+    "debug": False,
     "autoreload": False,
     "autoescape": True,
     "x-header": True
