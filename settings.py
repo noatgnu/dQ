@@ -1,3 +1,1 @@
-
-
-location = r"Z:\ALESSI\Toan\dQ_folder"
+location = r"/app/data"
