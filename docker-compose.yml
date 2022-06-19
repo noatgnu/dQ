@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+    volumes:
+      - ./data/npm/data:/data
+      - ./data/npm/letsencrypt:/etc/letsencrypt
+    networks:
+      - dq-net
+  cache:
+    image: redis:7
+    restart: always
+    ports:
+    - '6379:6379'
+    container_name: cache
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dq-net
+  dq:
+    tty: true
+    stdin_open: true
+    restart: always
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile
+    container_name: dq
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./data/dq:/app/data"
+    networks:
+      - dq-net
+    depends_on:
+      - cache
+networks:
+  dq-net:
