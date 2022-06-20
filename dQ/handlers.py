@@ -112,7 +112,7 @@ class CheckStatusHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID):
         job = Job.fetch(uniqueID, connection=r)
-        print(job.get_status())
+        print(job.get_status(refresh=True))
         folder_path = os.path.join(settings.location, uniqueID)
         file_path = os.path.join(folder_path, "DIANN", "progress.txt")
         if os.path.exists(file_path):
