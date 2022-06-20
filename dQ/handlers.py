@@ -118,7 +118,8 @@ class CheckStatusHandler(BaseHandler, ABC):
         folder_path = os.path.join(settings.location, uniqueID)
         file_path = os.path.join(folder_path, "DIANN", "progress.txt")
         job_status = job.get_status(refresh=True)
-        self.set_header("job-status", job_status)
+        self.set_header("Access-Control-Expose-Headers", "Job-Status")
+        self.set_header("Job-Status", job_status)
         if job_status == "started":
 
             if os.path.exists(file_path):
