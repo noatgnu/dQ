@@ -91,6 +91,8 @@ class DiannHandler(BaseHandler, ABC):
 class ZipHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID):
+        self.set_header("Content-Type", "application/zip")
+        self.set_header("Content-Disposition", "attachment")
         folder_path = os.path.join(settings.location, uniqueID)
         filename = os.path.join(folder_path, uniqueID + ".zip")
         chunk_size = 1024 * 1024 * 1
