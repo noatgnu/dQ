@@ -112,12 +112,22 @@ class CheckStatusHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID):
         job = Job.fetch(uniqueID, connection=r)
-        print(job.get_status(refresh=True))
         folder_path = os.path.join(settings.location, uniqueID)
         file_path = os.path.join(folder_path, "DIANN", "progress.txt")
-        if os.path.exists(file_path):
+        job_status = job.get_status(refresh=True)
+        self.set_header("job-status", job_status)
+        if job_status == "started":
+
+            if os.path.exists(file_path):
+                with open(file_path, "r") as infile:
+                    self.write(infile.read())
+            else:
+                self.set_status(404)
+                self.write("Not exists")
+        elif job_status == "finished":
+            self.set_header("job-status", "finished")
             with open(file_path, "r") as infile:
                 self.write(infile.read())
-        else:
-            self.set_status(404)
-            self.write("Not exists")
+        elif job_status == "queued":
+            self.set_header("job-status", "queued")
+            self.write("queued")

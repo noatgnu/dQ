@@ -530,7 +530,7 @@ class Diann:
             a = variation(g["Intensity"], nan_policy="omit")
             arr.append([i[0], a])
         df = pd.DataFrame(arr, columns=["Condition", "CV"])
-        df = df[pd.notnull(df["CV"])]
+        df = df[pd.notnull(df["CV"]) & (df["CV"] != "--")]
         return df
 
     def draw_cv_density(self, df: pd.DataFrame, filename):
