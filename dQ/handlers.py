@@ -74,6 +74,7 @@ class UploadHandler(BaseHandler):
 
 
 def run_diann(folder_path, uniqueID):
+    os.makedirs(os.path.join(folder_path, "DIANN"), exist_ok=True)
     with Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN")) as diann:
         print("diann")
     shutil.make_archive(os.path.join(folder_path, uniqueID), "zip", os.path.join(folder_path, "DIANN"))
