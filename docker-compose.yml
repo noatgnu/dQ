@@ -30,6 +30,8 @@ services:
     tty: true
     stdin_open: true
     restart: unless-stopped
+    environment:
+      REDIS_HOST: "redis://cache"
     build:
       context: ./dockerfiles
       dockerfile: Dockerfile

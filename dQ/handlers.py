@@ -14,7 +14,7 @@ from tornado.web import RequestHandler, stream_request_body
 
 from dQ.operation import Diann
 
-q = Queue(connection=Redis("redis://cache"))
+q = Queue(connection=Redis(os.getenv("REDIS_HOST")))
 
 class BaseHandler(RequestHandler, ABC):
     def set_default_headers(self):
