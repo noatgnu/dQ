@@ -5,7 +5,7 @@ from abc import ABC
 from urllib.parse import unquote
 from uuid import uuid4
 
-from redis.client import Redis
+from redis import Redis
 from rq import Queue
 from tornado import gen, iostream
 
