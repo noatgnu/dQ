@@ -5,6 +5,8 @@ from abc import ABC
 from urllib.parse import unquote
 from uuid import uuid4
 
+from redis.client import Redis
+from rq import Queue
 from tornado import gen, iostream
 
 import settings
@@ -12,6 +14,7 @@ from tornado.web import RequestHandler, stream_request_body
 
 from dQ.operation import Diann
 
+q = Queue(connection=Redis("http://cache"))
 
 class BaseHandler(RequestHandler, ABC):
     def set_default_headers(self):
@@ -68,13 +71,17 @@ class UploadHandler(BaseHandler):
         self.write("OK")
 
 
+def run_diann(folder_path, uniqueID):
+    with Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN")) as diann:
+        print("diann")
+    shutil.make_archive(os.path.join(folder_path, uniqueID), "zip", os.path.join(folder_path, "DIANN"))
+
+
 class DiannHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID):
         folder_path = os.path.join(settings.location, uniqueID)
-        with Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN")) as diann:
-            print("diann")
-        shutil.make_archive(os.path.join(folder_path, uniqueID), "zip", os.path.join(folder_path, "DIANN"))
+        q.enqueue(run_diann, folder_path, uniqueID)
         self.write(uniqueID)
 
 

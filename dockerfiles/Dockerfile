@@ -29,4 +29,4 @@ RUN pip install -r requirements.txt
 
 VOLUME ["/app/data"]
 
-ENTRYPOINT ["python", "main.py"]
+ENTRYPOINT ["bash"]

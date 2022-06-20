@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  proxy:
+  dq-proxy:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
@@ -42,5 +42,7 @@ services:
       - dq-net
     depends_on:
       - cache
+    command:
+      - python main.py
 networks:
   dq-net:
