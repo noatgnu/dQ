@@ -14,7 +14,7 @@ from tornado.web import RequestHandler, stream_request_body
 
 from dQ.operation import Diann
 
-q = Queue(connection=Redis("redis://cache:6379"))
+q = Queue(connection=Redis("redis://cache"))
 
 class BaseHandler(RequestHandler, ABC):
     def set_default_headers(self):
@@ -81,8 +81,8 @@ class DiannHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID):
         folder_path = os.path.join(settings.location, uniqueID)
-        q.enqueue(run_diann, folder_path, uniqueID)
-        self.write(uniqueID)
+        result = q.enqueue(run_diann, folder_path, uniqueID)
+        self.write(result.origin)
 
 
 class ZipHandler(BaseHandler, ABC):

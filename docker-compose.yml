@@ -42,8 +42,7 @@ services:
       - dq-net
     depends_on:
       - cache
-    command:
-      - python main.py
+    command: python main.py
   worker:
     tty: true
     stdin_open: true
@@ -58,6 +57,10 @@ services:
       - dq-net
     depends_on:
       - cache
-
+    command:
+      - rq
+      - worker
+      - --url
+      - redis://cache
 networks:
   dq-net:

@@ -1,6 +1,6 @@
 FROM python:3.9
 
-ARG DOCKER_IMAGE_VERSION=unknown
+ARG DOCKER_IMAGE_VERSION=0.1
 
 LABEL \
       org.label-schema.name="dQ" \
@@ -19,14 +19,13 @@ WORKDIR /app/src
 
 RUN apt-get update
 RUN apt-get upgrade -y
-RUN apt-get install git
+RUN apt-get install git redis -y
 
 RUN git clone https://github.com/noatgnu/dQ.git
 
 WORKDIR /app/src/dQ
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 VOLUME ["/app/data"]
 
-ENTRYPOINT ["bash"]
