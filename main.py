@@ -16,9 +16,9 @@ if sys.platform.startswith("win32"):
 routes = [
     (r"/", MainHandler),
     (r"/api/upload/", UploadHandler),
-    (r"/api/diann/(.*)", DiannHandler),
-    (r"/api/download/(.*)", ZipHandler),
-    (r"/api/status/(.*)", CheckStatusHandler),
+    (r"/api/diann/(.*)/", DiannHandler),
+    (r"/api/download/(.*)/", ZipHandler),
+    (r"/api/status/(.*)/", CheckStatusHandler),
 ]
 
 settings = {

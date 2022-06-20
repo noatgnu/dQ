@@ -31,7 +31,7 @@ services:
     stdin_open: true
     restart: unless-stopped
     environment:
-      REDIS_HOST: "redis://cache"
+      REDIS_HOST: "cache"
     build:
       context: ./dockerfiles
       dockerfile: Dockerfile

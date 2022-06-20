@@ -7,6 +7,7 @@ from uuid import uuid4
 
 from redis import Redis
 from rq import Queue
+from rq.job import Job
 from tornado import gen, iostream
 
 import settings
@@ -14,7 +15,8 @@ from tornado.web import RequestHandler, stream_request_body
 
 from dQ.operation import Diann
 
-q = Queue(connection=Redis(os.getenv("REDIS_HOST")))
+r = Redis(os.getenv("REDIS_HOST"))
+q = Queue(connection=r)
 
 class BaseHandler(RequestHandler, ABC):
     def set_default_headers(self):
@@ -81,8 +83,8 @@ class DiannHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID):
         folder_path = os.path.join(settings.location, uniqueID)
-        result = q.enqueue(run_diann, folder_path, uniqueID)
-        self.write(result.origin)
+        result = q.enqueue(run_diann, job_timeout="2h", args=(folder_path, uniqueID), kwargs={"job_id": uniqueID})
+        self.write(result.id)
 
 
 class ZipHandler(BaseHandler, ABC):
@@ -109,6 +111,8 @@ class ZipHandler(BaseHandler, ABC):
 class CheckStatusHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID):
+        job = Job.fetch(uniqueID, connection=r)
+        print(job.get_status())
         folder_path = os.path.join(settings.location, uniqueID)
         file_path = os.path.join(folder_path, "DIANN", "progress.txt")
         if os.path.exists(file_path):
