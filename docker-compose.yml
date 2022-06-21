@@ -1,23 +1,24 @@
 version: "3"
 
 services:
-  dq-proxy:
-    image: 'jc21/nginx-proxy-manager:latest'
+  frontend:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile-dQng
+    container_name: frontend
     restart: unless-stopped
     ports:
-      - '80:80' # Public HTTP Port
-      - '443:443' # Public HTTPS Port
-      - '81:81' # Admin Web Port
+      - '8080:80' # Public HTTP Port
     volumes:
-      - ./data/npm/data:/data
-      - ./data/npm/letsencrypt:/etc/letsencrypt
+      - ./data/nginx/templates:/etc/nginx/templates
     networks:
       - dq-net
+    environment:
+      - NGINX_HOST=localhost
+
   cache:
     image: redis:7
     restart: always
-    ports:
-    - '6379:6379'
     container_name: cache
     healthcheck:
       test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
@@ -29,7 +30,7 @@ services:
   backend:
     tty: true
     stdin_open: true
-    restart: unless-stopped
+    restart: always
     environment:
       REDIS_HOST: "cache"
     build:

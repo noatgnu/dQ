@@ -1,0 +1,25 @@
+FROM node:18-bullseye-slim
+LABEL maintainer="tphung001@dundee.ac.uk"
+
+ARG BUILD_DATE
+ARG API_HOST=localhost:8000
+LABEL build-date=$BUILD_DATE
+
+WORKDIR /usr/local/app
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get -y install git
+
+RUN git clone https://github.com/noatgnu/dQng.git
+WORKDIR /usr/local/app/dQng
+RUN sed -i -r "s|localhost:8000|${API_HOST}|" ./src/environments/environment.prod.ts
+#RUN sed -i 's/localhost:8000/'"${API_HOST}"'/g' ./src/environments/environment.ts
+RUN npm -g config set user root
+RUN npm install --quiet --no-progress -g @angular/cli@13
+RUN npm install
+RUN node_modules/.bin/ng build
+FROM nginx:latest
+
+COPY --from=0 /usr/local/app/dQng/dist /usr/share/nginx/html
+
+EXPOSE 80
