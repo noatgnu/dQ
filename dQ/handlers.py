@@ -1,6 +1,8 @@
 import logging
 import os
 import shutil
+import subprocess
+import sys
 from abc import ABC
 from urllib.parse import unquote
 from uuid import uuid4
@@ -58,22 +60,26 @@ class UploadHandler(BaseHandler):
         #mtype = self.request.headers.get("Content-Type")
         #logging.info('PUT "%s" "%s" %d bytes', filename, mtype, self.bytes_read)
         self.open_file.close()
-        with open(self.path, "rt") as tempfile, \
-                open(os.path.join(self.folder_path, "data", self.filename), "wt", newline="") as datafile:
-            boundary_pass = False
-            for line in tempfile:
-                templine = line.strip()
-                if templine.startswith("------WebKitFormBoundary"):
-                    if boundary_pass == True:
-                        break
-                    continue
-                elif templine.startswith("Content-"):
-                    continue
-                elif templine == "" and boundary_pass == False:
-                    boundary_pass = True
-                    continue
-                else:
-                    datafile.write(line)
+        if sys.platform.startswith("win32"):
+            with open(self.path, "rt") as tempfile, \
+                    open(os.path.join(self.folder_path, "data", self.filename), "wt", newline="") as datafile:
+                boundary_pass = False
+                for line in tempfile:
+                    templine = line.strip()
+                    if templine.startswith("------WebKitFormBoundary"):
+                        if boundary_pass == True:
+                            break
+                        continue
+                    elif templine.startswith("Content-"):
+                        continue
+                    elif templine == "" and boundary_pass == False:
+                        boundary_pass = True
+                        continue
+                    else:
+                        datafile.write(line)
+        else:
+            subprocess.run(["tail", "-n", "+5", self.path, "|", "head", "-n", "-2", ">", os.path.join(self.folder_path, "data", self.filename)])
+
         self.write("OK")
 
 
