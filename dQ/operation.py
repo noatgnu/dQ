@@ -293,7 +293,7 @@ class Diann:
             for ns in gos:
                 df["GO.{}".format(ns)] = Series(gos[ns], index=df.index)
             self.write_progress("Completed adding gene ontology definitions to pg_matrix file")
-        self.write_progress("Began processing pg_matrix file")
+        self.write_progress("Completed processing pg_matrix file")
         return df
 
     def process_data(self):
