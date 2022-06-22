@@ -61,15 +61,15 @@ class UploadHandler(BaseHandler):
         with open(self.path, "rt") as tempfile, \
                 open(os.path.join(self.folder_path, "data", self.filename), "wt", newline="") as datafile:
             for line in tempfile:
-                line = line.strip()
-                if line.startswith("------WebKitFormBoundary"):
+                templine = line.strip()
+                if templine.startswith("------WebKitFormBoundary"):
                     continue
-                elif line.startswith("Content-"):
+                elif templine.startswith("Content-"):
                     continue
-                elif line == "":
+                elif templine == "":
                     continue
                 else:
-                    datafile.write(line + "\n")
+                    datafile.write(line)
         self.write("OK")
 
 
