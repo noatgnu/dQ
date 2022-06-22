@@ -61,13 +61,16 @@ class UploadHandler(BaseHandler):
         with open(self.path, "rt") as tempfile, \
                 open(os.path.join(self.folder_path, "data", self.filename), "wt", newline="") as datafile:
             boundary_pass = False
+            last_boundary = False
             for line in tempfile:
                 templine = line.strip()
                 if templine.startswith("------WebKitFormBoundary"):
+                    if boundary_pass == True:
+                        last_boundary = True
                     continue
                 elif templine.startswith("Content-"):
                     continue
-                elif templine == "" and boundary_pass == False:
+                elif templine == "" and (boundary_pass == False or last_boundary == True):
                     boundary_pass = True
                     continue
                 else:
