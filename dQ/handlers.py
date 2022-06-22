@@ -73,18 +73,18 @@ class UploadHandler(BaseHandler):
         self.write("OK")
 
 
-def run_diann(folder_path, uniqueID, fasta, gaf):
+def run_diann(folder_path, uniqueID, fasta, gaf, obo):
     os.makedirs(os.path.join(folder_path, "DIANN"), exist_ok=True)
-    with Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN"), os.path.join(folder_path, "data", fasta), os.path.join(folder_path, "data", gaf)) as diann:
+    with Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN"), os.path.join(folder_path, "data", fasta), os.path.join(folder_path, "data", gaf), os.path.join(folder_path, "data", obo)) as diann:
         print("diann")
     shutil.make_archive(os.path.join(folder_path, uniqueID), "zip", os.path.join(folder_path, "DIANN"))
 
 
 class DiannHandler(BaseHandler, ABC):
     @gen.coroutine
-    def get(self, uniqueID, fasta, gaf):
-        folder_path = os.path.join(settings.location, uniqueID)
-        result = q.enqueue(run_diann, args=(folder_path, uniqueID, fasta, gaf), job_timeout="2h",  job_id=uniqueID)
+    def get(self, uniqueID, fasta, gaf, obo):
+        folder_path = os.path.join(settings.location, uniqueID, obo)
+        result = q.enqueue(run_diann, args=(folder_path, uniqueID, fasta, gaf, obo), job_timeout="2h",  job_id=uniqueID)
         self.write(result.id)
 
 
