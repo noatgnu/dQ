@@ -78,7 +78,9 @@ class UploadHandler(BaseHandler):
                     else:
                         datafile.write(line)
         else:
-            subprocess.run(["tail", "-n", "+5", self.path, "|", "head", "-n", "-2", ">", os.path.join(self.folder_path, "data", self.filename)])
+            p1 = subprocess.Popen(["tail", "-n", "+5", self.path], stdout=subprocess.PIPE)
+            with open(os.path.join(self.folder_path, "data", self.filename), "wb") as datafile:
+                subprocess.run(["head", "-n", "-2"], stdin=p1.stdout, stdout=datafile)
 
         self.write("OK")
 
