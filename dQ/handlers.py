@@ -70,8 +70,10 @@ class UploadHandler(BaseHandler):
                     continue
                 elif templine.startswith("Content-"):
                     continue
-                elif templine == "" and (boundary_pass == False or last_boundary == True):
+                elif templine == "" and boundary_pass == False:
                     boundary_pass = True
+                    continue
+                elif templine == "" and last_boundary == True:
                     continue
                 else:
                     datafile.write(line)
