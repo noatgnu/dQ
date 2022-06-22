@@ -83,7 +83,7 @@ def run_diann(folder_path, uniqueID, fasta, gaf, obo):
 class DiannHandler(BaseHandler, ABC):
     @gen.coroutine
     def get(self, uniqueID, fasta, gaf, obo):
-        folder_path = os.path.join(settings.location, uniqueID, obo)
+        folder_path = os.path.join(settings.location, uniqueID)
         result = q.enqueue(run_diann, args=(folder_path, uniqueID, fasta, gaf, obo), job_timeout="2h",  job_id=uniqueID)
         self.write(result.id)
 
