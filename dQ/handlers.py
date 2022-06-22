@@ -66,8 +66,6 @@ class UploadHandler(BaseHandler):
                     continue
                 elif templine.startswith("Content-"):
                     continue
-                elif templine == "":
-                    continue
                 else:
                     datafile.write(line)
         self.write("OK")
