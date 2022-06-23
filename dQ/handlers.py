@@ -11,6 +11,7 @@ from redis import Redis
 from rq import Queue
 from rq.job import Job
 from tornado import gen, iostream
+from tornado.escape import json_decode
 
 import settings
 from tornado.web import RequestHandler, stream_request_body
@@ -97,6 +98,13 @@ class DiannHandler(BaseHandler, ABC):
     def get(self, uniqueID, fasta, gaf, obo):
         folder_path = os.path.join(settings.location, uniqueID)
         result = q.enqueue(run_diann, args=(folder_path, uniqueID, fasta, gaf, obo), job_timeout="2h",  job_id=uniqueID)
+        self.write(result.id)
+
+    @gen.coroutine
+    def post(self):
+        req = json_decode(self.request.body)
+        folder_path = req["uniqueID"]
+        result = q.enqueue(run_diann, args=(folder_path, req["uniqueID"], req["fasta"], req["gaf"], req["obo"]), job_timeout="2h", job_id=req["uniqueID"])
         self.write(result.id)
 
 
