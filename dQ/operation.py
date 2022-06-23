@@ -576,7 +576,7 @@ class Diann:
     def draw_correlation_matrix(self, df: pd.DataFrame, path):
         self.write_progress("Began creating correlation matrix")
         l, folder = os.path.split(path)
-        corr_mat = df[df.columns[11:]].corr()
+        corr_mat = df[df.columns[10:]].corr()
         clustered = cluster_corr(corr_mat)
         clustered.to_csv(os.path.join(path, "correlation_matrix.tsv"), sep="\t")
         clustered = clustered.reset_index()
