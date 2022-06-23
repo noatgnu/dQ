@@ -103,7 +103,7 @@ class DiannHandler(BaseHandler, ABC):
     @gen.coroutine
     def post(self):
         req = json_decode(self.request.body)
-        folder_path = req["uniqueID"]
+        folder_path = os.path.join(settings.location, req["uniqueID"])
         result = q.enqueue(run_diann, args=(folder_path, req["uniqueID"], req["fasta"], req["gaf"], req["obo"]), job_timeout="2h", job_id=req["uniqueID"])
         self.write(result.id)
 
