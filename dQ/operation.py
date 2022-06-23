@@ -31,8 +31,8 @@ import scipy.cluster.hierarchy as sch
 from unimod_mapper import UnimodMapper
 
 from sequal.sequence import Sequence
-from uniprot import parser
-from uniprot.parser import acc_regex, UniprotParser
+
+from uniprotparser.parser import acc_regex, UniprotParser
 from pandas import Series
 from plotnine import ggplot, aes, geom_col, scale_fill_brewer, facet_wrap, theme_minimal, geom_text, geom_boxplot, \
     theme, element_text, save_as_pdf_pages, ggtitle, geom_density, scale_color_brewer, geom_line, geom_point, \
