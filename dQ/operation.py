@@ -264,6 +264,7 @@ class Diann:
         pg_file = os.path.join(folder_path, "Reports.pg_matrix.tsv")
         df = pd.read_csv(pg_file, sep="\t")
         initial_check_pg(df, file_list)
+        print(self.goa_file, self.go_obo)
         if self.goa_file != "" and self.go_obo != "":
             self.write_progress("Began adding gene ontology definitions to pg_matrix file")
             a = set()
