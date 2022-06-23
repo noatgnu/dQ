@@ -88,7 +88,13 @@ class UploadHandler(BaseHandler):
 
 def run_diann(folder_path, uniqueID, fasta, gaf, obo):
     os.makedirs(os.path.join(folder_path, "DIANN"), exist_ok=True)
-    with Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN"), os.path.join(folder_path, "data", fasta), os.path.join(folder_path, "data", gaf), os.path.join(folder_path, "data", obo)) as diann:
+    if fasta != "":
+        fasta = os.path.join(folder_path, "data", fasta)
+    if gaf != "":
+        gaf = os.path.join(folder_path, "data", gaf)
+    if obo != "":
+        obo = os.path.join(folder_path, "data", obo)
+    with Diann(os.path.join(folder_path, "data"), os.path.join(folder_path, "DIANN"), fasta, gaf, obo) as diann:
         print("diann")
     shutil.make_archive(os.path.join(folder_path, uniqueID), "zip", os.path.join(folder_path, "DIANN"))
 
