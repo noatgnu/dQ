@@ -305,7 +305,7 @@ class Diann:
             os.makedirs(os.path.join(self.temp_folder_path, folder), exist_ok=True)
 
             self.draw_correlation_matrix(self.pr[l], os.path.join(self.temp_folder_path, folder))
-            peptide = self.pr[l].groupby(["Protein.Group"]).size()
+            peptide = self.pr[l].groupby(["Protein.Group"])["Proteotypic"].sum()
             peptide = peptide.reset_index()
             peptide = peptide.rename(columns={peptide.columns[-1]: "Peptide.Count"})
             unique_peptide = self.pr[l][self.pr[l]["Proteotypic"] == 1].groupby(["Protein.Group"]).size()
