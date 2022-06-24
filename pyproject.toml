@@ -20,6 +20,7 @@ redis = "^4.3.3"
 rq = "^1.10.1"
 uniprotparser = "^1.0.0"
 sequal = "^1.0.0"
+rpy2 = "^3.5.2"
 
 [tool.poetry.dev-dependencies]
 
