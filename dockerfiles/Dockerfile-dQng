@@ -1,9 +1,13 @@
 FROM node:18-bullseye-slim
 LABEL maintainer="tphung001@dundee.ac.uk"
 
-ARG BUILD_DATE
 ARG API_HOST=localhost:8000
-LABEL build-date=$BUILD_DATE
+LABEL \
+      org.label-schema.name="dQng" \
+      org.label-schema.description="Docker container for dQng" \
+      org.label-schema.version="$DOCKER_IMAGE_VERSION" \
+      org.label-schema.vcs-url="https://github.com/noatgnu/dQng" \
+      org.label-schema.schema-version="1.0"
 
 WORKDIR /usr/local/app
 RUN apt-get -y update

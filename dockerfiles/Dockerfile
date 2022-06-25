@@ -1,6 +1,5 @@
 FROM python:3.9
-
-ARG DOCKER_IMAGE_VERSION=0.1
+LABEL maintainer="tphung001@dundee.ac.uk"
 
 LABEL \
       org.label-schema.name="dQ" \
