@@ -86,7 +86,7 @@ def initial_check_pr(df: pd.DataFrame, samples: list[str]):
         "Protein.Ids": pa.Column(str),
         "Protein.Names": pa.Column(str, nullable=True),
         "Genes": pa.Column(str, nullable=True),
-        "First.Protein.Description": pa.Column(str, nullable=True),
+        #"First.Protein.Description": pa.Column(str, nullable=True),
         "Proteotypic": pa.Column(int),
         "Stripped.Sequence": pa.Column(str),
         "Modified.Sequence": pa.Column(str),
@@ -106,7 +106,7 @@ def initial_check_pg(df: pd.DataFrame, samples: list[str]):
         "Protein.Ids": pa.Column(str),
         "Protein.Names": pa.Column(str, nullable=True),
         "Genes": pa.Column(str, nullable=True),
-        "First.Protein.Description": pa.Column(str, nullable=True),
+        #"First.Protein.Description": pa.Column(str, nullable=True),
     }
     for c in samples:
         schema[c] = pa.Column(float, nullable=True)
@@ -139,6 +139,7 @@ class File:
 class Diann:
     def __init__(self, folder_path, temp_folder_path=".", fasta_lib_path="", goa_file="", go_obo=""):
         self.temp_folder_path = temp_folder_path
+        os.makedirs(self.temp_folder_path, exist_ok=True)
         self.progress_file = open(os.path.join(self.temp_folder_path, "progress.txt"), "wt")
         self.folder_path = folder_path
         self.fasta_lib_path = fasta_lib_path
@@ -578,6 +579,22 @@ class Diann:
         self.write_progress("Began creating correlation matrix")
         l, folder = os.path.split(path)
         corr_mat = df[df.columns[10:]].corr()
+        without_cluster_mat = corr_mat.reset_index()
+        without_cluster_mat = without_cluster_mat.rename(columns={without_cluster_mat.columns[0]: "X"})
+        orderX = [i for i in without_cluster_mat["X"]]
+        orderY = [i for i in without_cluster_mat.columns if i != "X"]
+        melted = pd.melt(without_cluster_mat,
+                         id_vars=["X"],
+                         value_vars=[i for i in without_cluster_mat.columns if i != "X"],
+                         value_name="Intensity",
+                         var_name="Y"
+                         )
+        melted["X"] = pd.Categorical(melted["X"], categories=orderX)
+        melted["Y"] = pd.Categorical(melted["Y"], categories=orderY)
+        plots = ggplot(melted, aes(x="X", y="Y", fill="Intensity")) + geom_tile() + theme_minimal() \
+                + theme(axis_text_x=element_text(rotation=90, size=5))
+        plots.save(os.path.join(path, "correlation_matrix.without_cluster.pdf"))
+
         clustered = cluster_corr(corr_mat)
         clustered.to_csv(os.path.join(path, "correlation_matrix.tsv"), sep="\t")
         clustered = clustered.reset_index()
@@ -593,7 +610,7 @@ class Diann:
         melted["X"] = pd.Categorical(melted["X"], categories=orderX)
         melted["Y"] = pd.Categorical(melted["Y"], categories=orderY)
         plots = ggplot(melted, aes(x="X", y="Y", fill="Intensity")) + geom_tile() + theme_minimal() \
-                + theme(axis_text_x=element_text(rotation=90))
+                + theme(axis_text_x=element_text(rotation=90, size=5))
         plots.save(os.path.join(path, "correlation_matrix.pdf"))
         self.write_progress("Completed creating correlation matrix")
 

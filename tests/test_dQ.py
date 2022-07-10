@@ -11,11 +11,7 @@ class Test_dQ(unittest.TestCase):
     def test_CBQCA(self):
         d = Diann(r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\For_CBQCA Test", r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\For_CBQCA Test\temp", r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\SCP-Data\Mouse_UniprotSP_Cano+Iso_052021.fasta")
     def test_CBQCA_gaf(self):
-        d = Diann(r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\For_CBQCA Test", r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\For_CBQCA Test\temp", r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\SCP-Data\Mouse_UniprotSP_Cano+Iso_052021.fasta", r"C:\Users\Toan Phung\Downloads\goa_mouse.gaf", r"C:\Users\Toan Phung\Downloads\go.obo")
-    def test_CBQCA_gaf(self):
-        d = Diann(r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\For_CBQCA Test", r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\For_CBQCA Test\temp2", r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\SCP-Data\Mouse_UniprotSP_Cano+Iso_052021.fasta")
-    def test_CBQCA_gaf(self):
-        d = Diann(r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\For_CBQCA Test", r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\For_CBQCA Test\temp2", r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\SCP-Data\Mouse_UniprotSP_Cano+Iso_052021.fasta")
+        d = Diann(r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\20220419 - SCP IDs", r"\\mrc-smb.lifesci.dundee.ac.uk\mrc-group-folder\ALESSI\Toan\20220419 - SCP IDs\temp")
 
     def test_stuff(self):
         d = Diann(r"C:\Users\Toan Phung\Desktop\deploy\data\dq\17f7d003-2a5e-4940-9016-e62c287b7747\data", r"C:\Users\Toan Phung\Desktop\deploy\data\dq\17f7d003-2a5e-4940-9016-e62c287b7747\data2")
