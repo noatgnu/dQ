@@ -3,7 +3,6 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm+all,git
 
 *.pyc
-*.txt
 *.tsv
 data
 

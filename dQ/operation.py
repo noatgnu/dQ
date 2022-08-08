@@ -227,7 +227,6 @@ class Diann:
         file_location = {}
         self.write_progress("Began parsing log file")
         for l in glob(os.path.join(self.folder_path, "**", "*"), recursive=True):
-            print(l)
             if l.endswith("Reports.log.txt"):
                 folder, _ = os.path.split(l)
                 file_location[folder] = []
