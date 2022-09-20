@@ -6,7 +6,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application
 from tornado.options import define, options
 
-from dQ.handlers import MainHandler, UploadHandler, DiannHandler, ZipHandler, CheckStatusHandler
+from diannpy.handlers import MainHandler, UploadHandler, DiannHandler, ZipHandler, CheckStatusHandler
 
 define("port", default=8000, help="Port number")
 

@@ -146,6 +146,7 @@ class Diann:
         self.goa_file = goa_file
         self.go_obo = go_obo
         self.annotation = {}
+        print("Parsing log file for column name")
         self.raw_file_location = self.parse_log()
         self.pr = {}
         self.pg = {}
@@ -153,16 +154,22 @@ class Diann:
         self.modification = pd.DataFrame()
 
         self.process_data()
+        print("Combining PR and PG files")
         self.joined_pr = self.join_df(self.pr)
         self.joined_pg = self.join_df(self.pg)
         self.unimod_mapper = UnimodMapper()
         if self.fasta_lib_path == "":
+            print("Getting fasta library from UniProt")
             self.fasta_lib = self.get_fasta_lib()
 
         else:
+            print("Parsing fasta library from fasta file")
             self.fasta_lib = self.load_fasta_library()
+        print("Check for null data value count")
         self.draw_null()
+        print("Performing PCA analysis")
         self.pca(self.joined_pg, self.temp_folder_path)
+        print("Drawing profile")
         self.draw_profile(self.joined_pg, os.path.join(self.temp_folder_path, "profile.pg.pdf"))
         self.draw_total_intensity(self.joined_pr, os.path.join(self.temp_folder_path, "total.intensity.pr.pdf"))
         self.draw_detected_genes(self.joined_pr, os.path.join(self.temp_folder_path, "gene.detected.pr.pdf"))

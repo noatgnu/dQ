@@ -1,5 +1,5 @@
 import unittest
-from dQ.operation import Diann
+from diannpy.operation import Diann
 
 class Test_dQ(unittest.TestCase):
     def test_dq_class(self):

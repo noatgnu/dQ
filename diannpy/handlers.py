@@ -16,7 +16,7 @@ from tornado.escape import json_decode
 import settings
 from tornado.web import RequestHandler, stream_request_body
 
-from dQ.operation import Diann
+from diannpy.operation import Diann
 
 r = Redis(os.getenv("REDIS_HOST"))
 q = Queue(connection=r)
