@@ -138,7 +138,23 @@ class File:
 
 class Diann:
     def __init__(self, folder_path, temp_folder_path=".", fasta_lib_path="", goa_file="", go_obo=""):
+        """
+        Main object of diannpy
+
+        :type go_obo: str
+        obo file used in conjunction with goa file to add GO definition to output
+        :type goa_file: str
+        goa file used in conjunction with obo file to add GO definition to output
+        :type fasta_lib_path: str
+        fasta library file location used for ptm mapping (default would obtain fasta from uniprot)
+        :type temp_folder_path: str
+        folder location of temporary file for the package (default at the current location)
+        :type folder_path: str
+        folder location of DIANN output
+
+        """
         self.temp_folder_path = temp_folder_path
+        # Creating temporary folder if it does not exist
         os.makedirs(self.temp_folder_path, exist_ok=True)
         self.progress_file = open(os.path.join(self.temp_folder_path, "progress.txt"), "wt")
         self.folder_path = folder_path
@@ -231,6 +247,10 @@ class Diann:
         return df
 
     def parse_log(self):
+        """
+        go through diann log output and return a dictionary composing  of the folder location of the log file as key and a list of sample column from annotation.txt file
+        :return: dict[str, list]
+        """
         file_location = {}
         self.write_progress("Began parsing log file")
         for l in glob(os.path.join(self.folder_path, "**", "*"), recursive=True):
