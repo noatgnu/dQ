@@ -248,7 +248,11 @@ class Diann:
 
     def parse_log(self):
         """
-        go through diann log output and return a dictionary composing  of the folder location of the log file as key and a list of sample column from annotation.txt file
+        go through diann log output and return a dictionary composing  of the folder location of the log file as key and
+        a list of sample column from annotation.txt file from within that folder
+
+        this function also help setting internal sample and condition annotation dictionary of the object
+
         :return: dict[str, list]
         """
         file_location = {}
@@ -258,7 +262,9 @@ class Diann:
                 folder, _ = os.path.split(l)
                 file_location[folder] = []
                 annotation_path = os.path.join(folder, "annotation.txt")
+
                 if os.path.exists(annotation_path):
+                    # Get sample names from annotation.txt file
                     self.annotation[folder] = {}
                     df = pd.read_csv(annotation_path, sep="\t")
                     for i, r in df.iterrows():
@@ -266,6 +272,7 @@ class Diann:
                     file_location[folder] = list(df["Sample"].values)
 
                 else:
+                    # Opening log file and using `Loading run` line as flag for parsing sample name
                     with open(l, "rt") as log_stuff:
                         for line in log_stuff:
                             line = line.strip()
@@ -279,6 +286,12 @@ class Diann:
         return file_location
 
     def process_pr(self, folder_path, file_list):
+        """
+
+        :param folder_path: folder_path of DIANN output
+        :param file_list: list of input sample
+        :return: pd.DataFrame
+        """
         self.write_progress("Began processing pr_matrix file")
         pr_file = os.path.join(folder_path, "Reports.pr_matrix.tsv")
         df = pd.read_csv(pr_file, sep="\t")
