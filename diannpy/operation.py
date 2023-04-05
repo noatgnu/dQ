@@ -206,6 +206,11 @@ class Diann:
         self.progress_file.flush()
 
     def join_df(self, df_dict):
+        """
+        Transpose data file from wide form to long form with the categorical column being the `Sample` name column and `Intensity` as the value
+        :param df_dict:
+        :return:
+        """
         combined_pr = []
         order = []
         condition_order = []
@@ -472,41 +477,64 @@ class Diann:
         return seqs
 
     def get_seq(self, proteins):
-        for p in proteins["Protein.Group"].split(";"):
-            if p in self.fasta_lib:
-                if p in self.fasta_lib:
-                    yield p, self.fasta_lib[p], proteins["Genes"]
-                else:
-                    yield p, None, proteins["Genes"]
+        # from the protein.group column, get uniprot accession id list and return sequence stored in fasta library if available
+        # if not, return None
+        for protein in proteins["Protein.Group"].split(";"):
+            if protein in self.fasta_lib:
+                yield protein, self.fasta_lib[protein], proteins["Gene"]
+            else:
+                yield protein, None, proteins["Gene"]
+
 
     def protein_coverage(self):
+        # calculate coverage of each protein from DIANN peptide data
+        # coverage is defined as the percentage of the protein sequence that is covered by peptides
+        # coverage is calculated for each sample and peptide with no intensity is not counted
+        # peptide is mapped by checking if they match exactly with any sequence in the protein
+        # if the protein isoform is not found, the first isoform is used
+        # if the peptide is not found in the protein, it is not counted
+
         self.write_progress("Began analyzing protein coverage")
         cover_dict = {}
         gene_dict = {}
-        for i, r in self.joined_pr.iterrows():
-            if pd.notnull(r["Intensity"]):
-                for protein, seq, gene in self.get_seq(r):
+
+        # get peptide data with intensity
+        temp_df = self.joined_pr[self.joined_pr["Intensity"].notnull()]
+
+        # iterate through each peptide
+        for i, r in temp_df.iterrows():
+            # get protein sequence and gene name
+            for protein, seq, gene in self.get_seq(r):
+                if protein not in gene_dict:
                     gene_dict[protein] = gene
-                    if protein not in cover_dict:
-                        cover_dict[protein] = {}
-                    if r["Sample"] not in cover_dict[protein]:
-                        cover_dict[protein][r["Sample"]] = {}
-                    if seq:
-                        try:
+                if protein not in cover_dict:
+                    cover_dict[protein] = {}
+
+                if r["Sample"] not in cover_dict[protein]:
+                    cover_dict[protein][r["Sample"]] = {}
+
+                if seq:
+                    # try to map peptide to protein sequence if it could not be mapped, try the first isoform
+                    try:
+                        ind = seq.index(r["Stripped.Sequence"])
+                    except ValueError:
+                        if protein+"-1" in self.fasta_lib:
+                            seq = self.fasta_lib[protein+"-1"]
                             ind = seq.index(r["Stripped.Sequence"])
-                        except ValueError:
-                            if protein+"-1" in self.fasta_lib:
-                                seq = self.fasta_lib[protein+"-1"]
-                                ind = seq.index(r["Stripped.Sequence"])
-                            else:
-                                ind = -1
-                        if ind > -1:
-                            for n in range(len(r["Stripped.Sequence"])):
-                                pos = ind + n
-                                if pos not in cover_dict[protein][r["Sample"]]:
-                                    cover_dict[protein][r["Sample"]][pos] = 0
-                                cover_dict[protein][r["Sample"]][pos] = cover_dict[protein][r["Sample"]][pos] + 1
+                        else:
+                            ind = -1
+                    if ind > -1:
+                        # if peptide is found, count the position of each residue of the peptide in the protein
+                        # if the position is not in the dictionary, add it
+                        # if the position is in the dictionary, add 1 to the count
+                        for n in range(len(r["Stripped.Sequence"])):
+                            pos = ind + n
+                            if pos not in cover_dict[protein][r["Sample"]]:
+                                cover_dict[protein][r["Sample"]][pos] = 0
+                            cover_dict[protein][r["Sample"]][pos] = cover_dict[protein][r["Sample"]][pos] + 1
         result = []
+
+        # calculate coverage for each protein
         for p in cover_dict:
             if p in self.fasta_lib:
                 for s in cover_dict[p]:
@@ -521,29 +549,40 @@ class Diann:
         self.write_progress("Completed analyzing protein coverage")
 
     def modification_map(self):
+        # map modification sites of each protein from DIANN peptide data
+        # modification sites are defined as the position of the modified residue in the protein sequence
+
         self.write_progress("Began mapping modification sites")
         mod_dict = {}
         result = []
-        for i, r in self.joined_pr.iterrows():
-            if pd.notnull(r["Intensity"]):
-                for protein, seq, gene in self.get_seq(r):
 
-                    if protein not in mod_dict:
-                        mod_dict[protein] = {}
-                    if r["Sample"] not in mod_dict[protein]:
-                        mod_dict[protein][r["Sample"]] = {}
+        # get peptide data with intensity
+        temp_df = self.joined_pr[self.joined_pr["Intensity"].notnull()]
 
-                    if seq:
-                        try:
+        for i, r in temp_df.iterrows():
+            for protein, seq, gene in self.get_seq(r):
+
+                if protein not in mod_dict:
+                    mod_dict[protein] = {}
+                if r["Sample"] not in mod_dict[protein]:
+                    mod_dict[protein][r["Sample"]] = {}
+
+                if seq:
+                    try:
+                        ind = seq.index(r["Stripped.Sequence"])
+                    except ValueError:
+                        if protein+"-1" in self.fasta_lib:
+                            seq = self.fasta_lib[protein+"-1"]
                             ind = seq.index(r["Stripped.Sequence"])
-                        except ValueError:
-                            if protein+"-1" in self.fasta_lib:
-                                seq = self.fasta_lib[protein+"-1"]
-                                ind = seq.index(r["Stripped.Sequence"])
-                            else:
-                                ind = -1
-                        modded_pep = Sequence(r["Modified.Sequence"])
+                        else:
+                            ind = -1
+
+                    # parse modified sequence to get the position of the modified residue
+                    modded_pep = Sequence(r["Modified.Sequence"])
+                    # if the peptide is found in the protein, map the modification site
+                    if ind > -1:
                         for n, a in enumerate(modded_pep):
+                            # if the residue is modified, get the name of the modification and the position of the residue
                             if len(a.mods) > 0:
                                 for m in a.mods:
                                     name = self.unimod_mapper.id_to_name(str(m).replace("UniMod:", ""))
